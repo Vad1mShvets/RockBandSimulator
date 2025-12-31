@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcd6868c325ba4b4e997cdf6ea1988df, type: 3}
+  m_Name: Bass
+  m_EditorClassIdentifier: 
+  ELoop: {fileID: 0}
+  ALoop: {fileID: 8300000, guid: a7c77744f19804deabd8c8a9ec98631a, type: 3}
+  BLoop: {fileID: 8300000, guid: 791ff1649164445348a9b81147c22875, type: 3}
+  CLoop: {fileID: 8300000, guid: 19ea674af68424aa2b6363389d38d4bf, type: 3}
+  DLoop: {fileID: 8300000, guid: efaadf072469d47c3b58a18fccccfd1d, type: 3}
