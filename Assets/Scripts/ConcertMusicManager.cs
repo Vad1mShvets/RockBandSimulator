@@ -4,20 +4,26 @@ public class ConcertMusicManager : MonoBehaviour
 {
     [SerializeField] private InputReader _input;
 
-    [Header("Settings")]
-    [SerializeField] private float _chooseWindowSeconds = 3f;
+    [Header("Settings")] [SerializeField] private float _chooseWindowSeconds = 3f;
     [SerializeField] private float _perfectTimingSeconds = 1f;
 
-    [Header("Audio Data")]
-    [SerializeField] private ConcertAudioData _guitar;
+    [Header("Audio Data")] [SerializeField]
+    private ConcertAudioData _guitar;
+
     [SerializeField] private ConcertAudioData _drums;
     [SerializeField] private ConcertAudioData _bass;
 
-    [Header("Speakers")]
-    [SerializeField] private SpeakerAudioSource[] _speakers;
-    
-    [Header("Common Sounds")]
-    [SerializeField] private AudioClip[] _missSounds;
+    [Header("Speakers")] [SerializeField] private SpeakerAudioSource[] _speakers;
+
+    [Header("Track Masks")] [SerializeField]
+    private TrackMask _concertMask = TrackMask.All;
+
+    [SerializeField] private TrackMask _rehearsalMask = TrackMask.NoBass;
+
+    [Header("Common Sounds")] [SerializeField]
+    private AudioClip[] _missSounds;
+
+    private TrackMask _currentMask;
 
     private ConcertState _state = ConcertState.Idle;
     private TimingState _timingState = TimingState.Bad;
@@ -26,39 +32,27 @@ public class ConcertMusicManager : MonoBehaviour
     private AudioClip _queuedLoop;
 
     private double _nextLoopDsp;
-
     private bool _concertStarted;
     private bool _timerShown;
 
     private bool HasChoice => _queuedLoop != null;
-    
-    public struct ConcertData
-    {
-        public float ChooseWindowSeconds;
-        public float PerfectTimingSeconds;
-
-        public ConcertData(float chooseWindowSeconds, float perfectTimingSeconds)
-        {
-            ChooseWindowSeconds =  chooseWindowSeconds;
-            PerfectTimingSeconds = perfectTimingSeconds;
-        }
-    }
 
     private void Awake()
     {
-        GameEvents.OnCallingConcertStart += Init;
-        GameEvents.OnCallingRehearsalStart += Init;
-        
+        GameEvents.OnCallingConcertStart += () => Init(_concertMask);
+        GameEvents.OnCallingRehearsalStart += () => Init(_rehearsalMask);
+
         _input.ALoop += () => SelectLoop(_guitar.ALoop);
         _input.BLoop += () => SelectLoop(_guitar.BLoop);
         _input.CLoop += () => SelectLoop(_guitar.CLoop);
         _input.DLoop += () => SelectLoop(_guitar.DLoop);
     }
 
-    private void Init()
+    private void Init(TrackMask mask)
     {
         ResetState();
 
+        _currentMask = mask;
         _concertStarted = true;
 
         GameEvents.OnConcertStarted?.Invoke(
@@ -84,11 +78,11 @@ public class ConcertMusicManager : MonoBehaviour
         var dspNow = AudioSettings.dspTime;
 
         HandleTimer(dspNow);
-        
+
         if (dspNow >= _nextLoopDsp)
             ScheduleNext();
     }
-    
+
     private void SelectLoop(AudioClip clip)
     {
         if (!CanSelectLoop(clip))
@@ -104,7 +98,7 @@ public class ConcertMusicManager : MonoBehaviour
             return;
 
         ResolveTimingFeedback();
-        QueueLoop(clip);
+        _queuedLoop = clip;
     }
 
     private bool CanSelectLoop(AudioClip clip)
@@ -119,32 +113,10 @@ public class ConcertMusicManager : MonoBehaviour
         StartIntro();
     }
 
-    private void ResolveTimingFeedback()
-    {
-        GameEvents.OnLoopTimingPressed?.Invoke(_timingState);
-
-        if (_timingState == TimingState.Bad)
-        {
-            var randomMissSound = _missSounds[Random.Range(0, _missSounds.Length)];
-            foreach (var s in _speakers)
-                s.PlayGuitarMiss(randomMissSound);
-
-        }
-        
-        HideTimer();
-    }
-
-    private void QueueLoop(AudioClip clip)
-    {
-        _queuedLoop = clip;
-    }
-
     private void StartIntro()
     {
         _state = ConcertState.Intro;
-
-        var startDsp = AudioSettings.dspTime;
-        ScheduleLoop(_guitar.ELoop, startDsp);
+        ScheduleLoop(_guitar.ELoop, AudioSettings.dspTime);
     }
 
     private void ScheduleNext()
@@ -169,28 +141,39 @@ public class ConcertMusicManager : MonoBehaviour
             StopConcert();
             return;
         }
-        
+
         ScheduleLoop(_currentLoop, _nextLoopDsp);
     }
 
-    private void ScheduleLoop(AudioClip clip, double startDsp)
+    private void ScheduleLoop(AudioClip guitarLoop, double startDsp)
     {
-        _currentLoop = clip;
+        _currentLoop = guitarLoop;
 
-        var duration = (double)clip.samples / clip.frequency;
+        var duration = (double)guitarLoop.samples / guitarLoop.frequency;
         _nextLoopDsp = startDsp + duration;
 
+        var guitar = _currentMask.Guitar ? guitarLoop : null;
+        var drums = _currentMask.Drums ? GetDrums(guitarLoop) : null;
+        var bass = _currentMask.Bass ? GetBass(guitarLoop) : null;
+
         foreach (var s in _speakers)
-        {
-            s.Play(
-                clip,
-                GetDrums(clip),
-                GetBass(clip),
-                startDsp
-            );
-        }
+            s.Play(guitar, drums, bass, startDsp);
     }
-    
+
+    private void ResolveTimingFeedback()
+    {
+        GameEvents.OnLoopTimingPressed?.Invoke(_timingState);
+
+        if (_timingState == TimingState.Bad && _missSounds.Length > 0)
+        {
+            var miss = _missSounds[Random.Range(0, _missSounds.Length)];
+            foreach (var s in _speakers)
+                s.PlayGuitarMiss(miss);
+        }
+
+        HideTimer();
+    }
+
     private void HandleTimer(double dspNow)
     {
         if (_state != ConcertState.Playing || HasChoice)
@@ -198,14 +181,9 @@ public class ConcertMusicManager : MonoBehaviour
 
         var timeLeft = _nextLoopDsp - dspNow;
 
-        if (timeLeft <= _perfectTimingSeconds)
-        {
-            _timingState = TimingState.Perfect;
-        }
-        else
-        {
-            _timingState = TimingState.Bad;
-        }
+        _timingState = timeLeft <= _perfectTimingSeconds
+            ? TimingState.Perfect
+            : TimingState.Bad;
 
         if (!_timerShown && timeLeft <= _chooseWindowSeconds && timeLeft > 0)
         {
@@ -235,7 +213,7 @@ public class ConcertMusicManager : MonoBehaviour
 
         ResetState();
     }
-    
+
     private bool IsLastLoop(AudioClip clip) => clip == _guitar.DLoop;
 
     private AudioClip GetDrums(AudioClip g)

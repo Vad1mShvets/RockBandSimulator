@@ -17,7 +17,7 @@ public class SpeakerAudioSource : MonoBehaviour
     public void PlayGuitarMiss(AudioClip missSound)
     {
         if (!_guitarMiss || !missSound) return;
-        
+
         _guitarMiss.clip = missSound;
         _guitarMiss.Play();
     }
@@ -31,7 +31,14 @@ public class SpeakerAudioSource : MonoBehaviour
 
     private static void PlayOne(AudioSource source, AudioClip clip, double dspTime)
     {
-        if (!source || !clip) return;
+        if (!source) return;
+
+        if (!clip)
+        {
+            source.Stop();
+            source.clip = null;
+            return;
+        }
 
         source.clip = clip;
         source.PlayScheduled(dspTime);

@@ -8,13 +8,13 @@ public static class GameEvents
     //Concert
     public static Action OnCallingConcertStart;
     public static Action OnCallingRehearsalStart;
-    public static Action <ConcertMusicManager.ConcertData> OnConcertStarted;
+    public static Action <ConcertData> OnConcertStarted;
     public static Action OnLoopChooseTimerStart;
     public static Action<float> OnLoopChooseTimerUpdate;
     public static Action OnLoopChooseTimerEnd;
     public static Action<ConcertMusicManager.TimingState> OnLoopTimingPressed;
     
-    //Interactables
+    //Interactable
     public static Action<IInteractable> OnInteractableFocus;
     public static Action OnInteractableUnFocused;
 

@@ -4373,7 +4373,7 @@ GameObject:
   - component: {fileID: 927988048}
   - component: {fileID: 927988047}
   m_Layer: 0
-  m_Name: RehersalSnapPoint
+  m_Name: RehearsalSnapPoint
   m_TagString: Untagged
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -6079,6 +6079,14 @@ MonoBehaviour:
   - {fileID: 1506387162}
   - {fileID: 339692352}
   - {fileID: 1710707519}
+  _concertMask:
+    Guitar: 1
+    Drums: 1
+    Bass: 1
+  _rehearsalMask:
+    Guitar: 1
+    Drums: 1
+    Bass: 0
   _missSounds:
   - {fileID: 8300000, guid: f6486585440464aa1ac0329663d0f3c1, type: 3}
   - {fileID: 8300000, guid: 2e2355f1901694dc28d1c3d58671e25b, type: 3}
@@ -6128,7 +6136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerSnapMover: {fileID: 759256665}
   _playerCameraLook: {fileID: 759256666}
-  _rehersalStartPoint: {fileID: 927988048}
+  _rehearsalStartPoint: {fileID: 927988048}
 --- !u!1 &1271836290
 GameObject:
   m_ObjectHideFlags: 0

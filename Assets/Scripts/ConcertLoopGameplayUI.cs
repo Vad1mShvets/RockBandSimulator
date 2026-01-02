@@ -55,7 +55,7 @@ public class ConcertLoopGameplayUI : MonoBehaviour
         _buttonsPanel.SetActive(false);
     }
 
-    private void SetupPerfectTimingFill(ConcertMusicManager.ConcertData data)
+    private void SetupPerfectTimingFill(ConcertData data)
     {
         _perfectTimingFillImage.fillAmount = data.PerfectTimingSeconds /  data.ChooseWindowSeconds;
     }
