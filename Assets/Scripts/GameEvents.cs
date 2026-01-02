@@ -7,6 +7,7 @@ public static class GameEvents
     
     //Concert
     public static Action OnCallingConcertStart;
+    public static Action OnCallingRehearsalStart;
     public static Action <ConcertMusicManager.ConcertData> OnConcertStarted;
     public static Action OnLoopChooseTimerStart;
     public static Action<float> OnLoopChooseTimerUpdate;

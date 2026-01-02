@@ -25,8 +25,8 @@ public class SpeakerAudioSource : MonoBehaviour
     public void StopAll()
     {
         if (_guitar) _guitar.Stop();
-        if (_drums) _drums?.Stop();
-        if (_bass) _bass?.Stop();
+        if (_drums) _drums.Stop();
+        if (_bass) _bass.Stop();
     }
 
     private static void PlayOne(AudioSource source, AudioClip clip, double dspTime)

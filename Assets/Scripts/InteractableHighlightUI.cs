@@ -27,7 +27,7 @@ public class InteractableHighlightUI : MonoBehaviour
     {
         var interactableData = InteractablesData.Instance.GetInteractableData(interactable.Type);
         
-        _nameText.text = interactableData.name;
+        _nameText.text = interactableData.Name;
         _descriptionText.text = interactableData.Description;
     }
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc5101fe472ea426fbbc32341e1e16b6, type: 3}
   m_Name: Computer
   m_EditorClassIdentifier: 
-  Type: 4
+  Type: 2
   Name: Computer
   Description: Press 'E' to start concert
   Icon: {fileID: 0}

@@ -15,22 +15,27 @@ public class ConcertLoopGameplayUI : MonoBehaviour
         GameEvents.OnLoopChooseTimerStart += StartLoopChooseTimer;
         GameEvents.OnLoopChooseTimerUpdate += UpdateLoopChooseTimer;
         GameEvents.OnLoopChooseTimerEnd += EndLoopChooseTimer;
-        
-        GameEvents.OnCallingConcertStart += () =>
-        {
-            _buttonsPanel.SetActive(true);
-            _timingFillImage.gameObject.SetActive(false);
-            _timingFillImage.fillAmount = 0f;
-        };
-
+        GameEvents.OnCallingConcertStart += SetStartState;
+        GameEvents.OnCallingRehearsalStart += SetStartState;
         GameEvents.OnConcertStarted += SetupPerfectTimingFill;
     }
 
     private void OnDisable()
     {
+        GameEvents.OnCallingConcertStart -= StartLoopChooseTimer;
         GameEvents.OnLoopChooseTimerStart -= StartLoopChooseTimer;
         GameEvents.OnLoopChooseTimerUpdate -= UpdateLoopChooseTimer;
         GameEvents.OnLoopChooseTimerEnd -= EndLoopChooseTimer;
+        GameEvents.OnCallingConcertStart -= SetStartState;
+        GameEvents.OnCallingRehearsalStart -= SetStartState;
+        GameEvents.OnConcertStarted -= SetupPerfectTimingFill;
+    }
+
+    private void SetStartState()
+    {
+        _buttonsPanel.SetActive(true);
+        _timingFillImage.gameObject.SetActive(false);
+        _timingFillImage.fillAmount = 0f;
     }
 
     private void StartLoopChooseTimer()

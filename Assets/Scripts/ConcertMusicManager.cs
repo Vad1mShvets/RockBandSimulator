@@ -47,6 +47,7 @@ public class ConcertMusicManager : MonoBehaviour
     private void Awake()
     {
         GameEvents.OnCallingConcertStart += Init;
+        GameEvents.OnCallingRehearsalStart += Init;
         
         _input.ALoop += () => SelectLoop(_guitar.ALoop);
         _input.BLoop += () => SelectLoop(_guitar.BLoop);
