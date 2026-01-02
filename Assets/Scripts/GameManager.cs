@@ -6,5 +6,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         CursorManager.SetGameplay();
+        
+        GameEvents.OnGameStart?.Invoke();
     }
 }

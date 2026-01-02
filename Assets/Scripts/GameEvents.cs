@@ -2,6 +2,9 @@ using System;
 
 public static class GameEvents
 {
+    //Behaviour
+    public static Action OnGameStart;
+    
     //Concert
     public static Action OnCallingConcertStart;
     public static Action <ConcertMusicManager.ConcertData> OnConcertStarted;

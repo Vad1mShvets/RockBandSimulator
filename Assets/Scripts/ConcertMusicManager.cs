@@ -15,6 +15,9 @@ public class ConcertMusicManager : MonoBehaviour
 
     [Header("Speakers")]
     [SerializeField] private SpeakerAudioSource[] _speakers;
+    
+    [Header("Common Sounds")]
+    [SerializeField] private AudioClip[] _missSounds;
 
     private ConcertState _state = ConcertState.Idle;
     private TimingState _timingState = TimingState.Bad;
@@ -120,11 +123,13 @@ public class ConcertMusicManager : MonoBehaviour
         GameEvents.OnLoopTimingPressed?.Invoke(_timingState);
 
         if (_timingState == TimingState.Bad)
+        {
+            var randomMissSound = _missSounds[Random.Range(0, _missSounds.Length)];
             foreach (var s in _speakers)
-                s.PlayGuitarMiss(
-                    _guitar.MissSounds[Random.Range(0, _guitar.MissSounds.Length)]
-                );
+                s.PlayGuitarMiss(randomMissSound);
 
+        }
+        
         HideTimer();
     }
 

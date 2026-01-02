@@ -3,21 +3,22 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private InputReader _input;
-    [SerializeField] private Rigidbody _rigidbody;
+    [SerializeField] private CharacterController _characterController;
     [SerializeField] private Transform _cameraTransform;
-
     [SerializeField] private float _moveSpeed = 6f;
-    [SerializeField] private float _externalForceDamping = 10f;
+    [SerializeField] private float _gravity = -20f;
+    [SerializeField] private float _rotationSpeed = 10f;
 
-    private Vector3 _externalVelocity;
+    private float _yVelocity;
 
-    private void FixedUpdate()
+    private void Update()
     {
-        HandleMovement(_input.Move);
-        ApplyExternalForces();
+        RotateToCamera();
+        Move(_input.Move);
+        ApplyGravity();
     }
 
-    private void HandleMovement(Vector2 move)
+    private void Move(Vector2 move)
     {
         var camForward = _cameraTransform.forward;
         var camRight = _cameraTransform.right;
@@ -32,28 +33,32 @@ public class PlayerController : MonoBehaviour
             camForward * move.y +
             camRight * move.x;
 
-        var currentVelocity = _rigidbody.velocity;
-        
-        var playerVelocity = moveDir * _moveSpeed;
+        _characterController.Move(moveDir * _moveSpeed * Time.deltaTime);
+    }
 
-        _rigidbody.velocity = new Vector3(
-            playerVelocity.x + _externalVelocity.x,
-            currentVelocity.y,
-            playerVelocity.z + _externalVelocity.z
+    private void RotateToCamera()
+    {
+        var forward = _cameraTransform.forward;
+        forward.y = 0f;
+
+        if (forward.sqrMagnitude < 0.001f)
+            return;
+
+        var targetRotation = Quaternion.LookRotation(forward);
+
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            targetRotation,
+            _rotationSpeed * Time.deltaTime
         );
     }
 
-    private void ApplyExternalForces()
+    private void ApplyGravity()
     {
-        _externalVelocity = Vector3.Lerp(
-            _externalVelocity,
-            Vector3.zero,
-            _externalForceDamping * Time.fixedDeltaTime
-        );
-    }
-    
-    public void AddImpulse(Vector3 force)
-    {
-        _externalVelocity += force;
+        if (_characterController.isGrounded && _yVelocity < 0f)
+            _yVelocity = -2f;
+
+        _yVelocity += _gravity * Time.deltaTime;
+        _characterController.Move(Vector3.up * _yVelocity * Time.deltaTime);
     }
 }
