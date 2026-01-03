@@ -11,15 +11,18 @@ public static class InventoryManager
         if (!_inventoryItems.TryAdd(pickUpItem, 1))
             _inventoryItems[pickUpItem]++;
         
+        TryUseItem(pickUpItem);
+        
         GameEvents.OnInventoryUpdate?.Invoke();
     }
 
-    public static bool TryRemoveItem(InteractableTypes pickUpItem)
+    public static bool TryUseItem(InteractableTypes pickUpItem)
     {
-        if (!_inventoryItems.ContainsKey(pickUpItem)) return false;
+        if (!_inventoryItems.ContainsKey(pickUpItem) || _inventoryItems[pickUpItem] <= 0) return false;
         
         _inventoryItems[pickUpItem]--;
         
+        GameEvents.OnInventoryItemUsed?.Invoke(pickUpItem);
         GameEvents.OnInventoryUpdate?.Invoke();
         
         return true;

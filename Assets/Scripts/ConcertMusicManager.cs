@@ -212,6 +212,8 @@ public class ConcertMusicManager : MonoBehaviour
             s.StopAll();
 
         ResetState();
+        
+        GameEvents.OnConcertFinished?.Invoke();
     }
 
     private bool IsLastLoop(AudioClip clip) => clip == _guitar.DLoop;

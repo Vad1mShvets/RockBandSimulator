@@ -13,11 +13,17 @@ public static class GameEvents
     public static Action<float> OnLoopChooseTimerUpdate;
     public static Action OnLoopChooseTimerEnd;
     public static Action<ConcertMusicManager.TimingState> OnLoopTimingPressed;
+    public static Action OnConcertFinished;
     
     //Interactable
     public static Action<IInteractable> OnInteractableFocus;
     public static Action OnInteractableUnFocused;
 
     //Inventory
-    public static  Action OnInventoryUpdate;
+    public static Action OnInventoryUpdate;
+    public static Action<InteractableTypes> OnInventoryItemUsed;
+    
+    //Player
+    public static Action OnWalkingStart;
+    public static Action OnWalkingEnd;
 }

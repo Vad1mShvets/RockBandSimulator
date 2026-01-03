@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -10,12 +11,30 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _rotationSpeed = 10f;
 
     private float _yVelocity;
+    private bool _isWalking;
 
     private void Update()
     {
         RotateToCamera();
+        HandleWalkingEvents(_input.Move);
         Move(_input.Move);
         ApplyGravity();
+    }
+
+    private void HandleWalkingEvents(Vector2 move)
+    {
+        var hasInput = move.sqrMagnitude > 0.001f;
+
+        if (hasInput && !_isWalking)
+        {
+            _isWalking = true;
+            GameEvents.OnWalkingStart?.Invoke();
+        }
+        else if (!hasInput && _isWalking)
+        {
+            _isWalking = false;
+            GameEvents.OnWalkingEnd?.Invoke();
+        }
     }
 
     private void Move(Vector2 move)
@@ -33,7 +52,7 @@ public class PlayerController : MonoBehaviour
             camForward * move.y +
             camRight * move.x;
 
-        _characterController.Move(moveDir * _moveSpeed * Time.deltaTime);
+        _characterController.Move(moveDir * (_moveSpeed * Time.deltaTime));
     }
 
     private void RotateToCamera()
@@ -59,6 +78,6 @@ public class PlayerController : MonoBehaviour
             _yVelocity = -2f;
 
         _yVelocity += _gravity * Time.deltaTime;
-        _characterController.Move(Vector3.up * _yVelocity * Time.deltaTime);
+        _characterController.Move(Vector3.up * (_yVelocity * Time.deltaTime));
     }
 }
