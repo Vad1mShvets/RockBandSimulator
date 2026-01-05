@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcd6868c325ba4b4e997cdf6ea1988df, type: 3}
+  m_Name: Gvozdi
+  m_EditorClassIdentifier: 
+  ELoop: {fileID: 8300000, guid: 827d88f887dd646c6913d72e2a1d5206, type: 3}
+  ALoop: {fileID: 8300000, guid: f7bdbde5d365c4d4994ac009b8115147, type: 3}
+  BLoop: {fileID: 8300000, guid: d11b5b77c2f4f4290967aa8b19e02381, type: 3}
+  CLoop: {fileID: 8300000, guid: c2376c16743394f4d84a3d740454f08f, type: 3}
+  DLoop: {fileID: 8300000, guid: e3d4155b6e73340b38a62eaa2a7d5886, type: 3}

@@ -9,11 +9,18 @@ public static class GameEvents
     public static Action OnCallingConcertStart;
     public static Action OnCallingRehearsalStart;
     public static Action <ConcertData> OnConcertStarted;
+    
     public static Action OnLoopChooseTimerStart;
     public static Action<float> OnLoopChooseTimerUpdate;
     public static Action OnLoopChooseTimerEnd;
+    
     public static Action<ConcertMusicManager.TimingState> OnLoopTimingPressed;
+    
     public static Action OnConcertFinished;
+    
+    public static Action OnMidLoopTimingStarted;
+    public static Action<float> OnMidLoopTimingUpdate;
+    public static Action OnMidLoopTimingEnd;
     
     //Interactable
     public static Action<IInteractable> OnInteractableFocus;
@@ -26,4 +33,7 @@ public static class GameEvents
     //Player
     public static Action OnWalkingStart;
     public static Action OnWalkingEnd;
+    
+    //Guitars
+    public static Action<GuitarType> OnGuitarUpdate;
 }

@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09938c085cb6a406a87a43ecce148c60, type: 3}
+  m_Name: GvozdiPack
+  m_EditorClassIdentifier: 
+  GuitarData: {fileID: 11400000, guid: 32058503ef39144f5b4a063f94279e46, type: 2}
+  DrumsData: {fileID: 11400000, guid: 5ba10a31e8db249d9bbfed367b3121a1, type: 2}
+  BassData: {fileID: 11400000, guid: 88f96d9fb38b1467581cf55ff2ecf6a4, type: 2}
