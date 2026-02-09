@@ -18,7 +18,7 @@ public static class GameEvents
     
     public static Action OnConcertFinished;
     
-    public static Action OnMidLoopTimingStarted;
+    public static Action<LoopType> OnMidLoopTimingStarted;
     public static Action<float> OnMidLoopTimingUpdate;
     public static Action OnMidLoopTimingEnd;
     

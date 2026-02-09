@@ -231,7 +231,7 @@ public class ConcertMusicManager : MonoBehaviour
         {
             _midLoopActive = true;
             _midLoopWaitingForInput = true;
-            GameEvents.OnMidLoopTimingStarted?.Invoke();
+            GameEvents.OnMidLoopTimingStarted?.Invoke(_currentLoopType);
         }
 
         if (_midLoopActive)

@@ -6573,9 +6573,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _input: {fileID: 1094239544}
-  _chooseWindowSeconds: 3
-  _perfectTimingSeconds: 0.25
-  _midLoopTimingSeconds: 1.5
+  _chooseWindowSeconds: 2
+  _perfectTimingSeconds: 0.2
+  _midLoopTimingSeconds: 1
   _lopataPack: {fileID: 11400000, guid: 264316659ce934a12ac4bd4bf14e18e8, type: 2}
   _gvozdiPack: {fileID: 11400000, guid: 6349a65f71cde4320a814623322e13c3, type: 2}
   _speakers:
@@ -8633,7 +8633,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88553d30a578f403490d19fea505f198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _panel: {fileID: 1281301103}
+  _buttonsPanel: {fileID: 1281301103}
+  _buttonA: {fileID: 1224181745}
+  _buttonB: {fileID: 55731036}
+  _buttonC: {fileID: 2129156128}
+  _buttonD: {fileID: 884049567}
   _timingFillImage: {fileID: 150495953}
 --- !u!1 &1580217140
 GameObject:
