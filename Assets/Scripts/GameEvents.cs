@@ -13,6 +13,7 @@ public static class GameEvents
     public static Action OnLoopChooseTimerStart;
     public static Action<float> OnLoopChooseTimerUpdate;
     public static Action OnLoopChooseTimerEnd;
+    public static Action<LoopType> OnNewLoopStart;
     
     public static Action<ConcertMusicManager.TimingState> OnLoopTimingPressed;
     

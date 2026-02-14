@@ -209,6 +209,8 @@ public class ConcertMusicManager : MonoBehaviour
 
         foreach (var s in _speakers)
             s.Play(guitar, drums, bass, startDsp);
+        
+        GameEvents.OnNewLoopStart?.Invoke(_currentLoopType);
     }
 
     // ───────── TIMERS ─────────
