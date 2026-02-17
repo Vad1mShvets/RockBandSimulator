@@ -23,6 +23,9 @@ public static class GameEvents
     public static Action<float> OnMidLoopTimingUpdate;
     public static Action OnMidLoopTimingEnd;
     
+    //Behaviour
+    public static Action<bool> OnTVStatusChanged;
+    
     //Interactable
     public static Action<IInteractable> OnInteractableFocus;
     public static Action OnInteractableUnFocused;

@@ -5,14 +5,19 @@ public class NPCActivitySpotGroup : MonoBehaviour
 {
     [SerializeField] private List<NPCActivitySpot> spots = new();
 
-    public NPCActivitySpot RequestFree(NPCActor actor)
+    public bool RequestFree(NPCActor actor, out NPCActivitySpot activitySpot)
     {
+        activitySpot = null;
+        
         foreach (var spot in spots)
         {
             if (spot.TryReserve(actor))
-                return spot;
+            {
+                activitySpot = spot;
+                return true;
+            }
         }
 
-        return null;
+        return false;
     }
 }

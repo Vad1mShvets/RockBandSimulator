@@ -13,10 +13,11 @@ public class NPCSimpleLife : MonoBehaviour
     {
         var actor = GetComponent<NPCActor>();
         
-        var sit = sofaSpots.RequestFree(actor);
-
         _plan.Enqueue(new GoToActivity(wanderPoint));
-        _plan.Enqueue(new UseSpotActivity(sit, 10f));
+        
+        if (sofaSpots.RequestFree(actor, out var sofaSpot))
+            _plan.Enqueue(new UseSpotActivity(sofaSpot, 10f));
+        
         _plan.Enqueue(new GoToActivity(wanderPoint));
     }
 
