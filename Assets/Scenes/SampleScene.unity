@@ -6749,6 +6749,7 @@ GameObject:
   - component: {fileID: 759256664}
   - component: {fileID: 759256665}
   - component: {fileID: 759256666}
+  - component: {fileID: 759256669}
   - component: {fileID: 759256668}
   m_Layer: 0
   m_Name: Player
@@ -6880,6 +6881,21 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &759256669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759256660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1faf29173ffc4460939b5c0f8686004, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _input: {fileID: 1094239544}
+  _attackCooldown: 0.6
+  _exitCombatCooldown: 5
 --- !u!1 &774115503
 GameObject:
   m_ObjectHideFlags: 0
@@ -15482,7 +15498,7 @@ VideoPlayer:
   m_DataSource: 0
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
-  m_AudioOutputMode: 2
+  m_AudioOutputMode: 0
   m_TargetAudioSources:
   - {fileID: 0}
   m_DirectAudioVolumes:
@@ -15510,11 +15526,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _videoPlayer: {fileID: 1625671574}
-  _guitarClip: {fileID: 32900000, guid: 26bba04c4ccbe4beab19f61ce71ef90f, type: 3}
-  _walkClip: {fileID: 32900000, guid: 3f3a3c652469f42c784283fc31edb120, type: 3}
   _idleClip: {fileID: 32900000, guid: 7987e4560d5974b0aa792d5290b9cd79, type: 3}
-  _cigsClip: {fileID: 32900000, guid: 810658359d49641dcbe6168ef27350c3, type: 3}
+  _walkClip: {fileID: 32900000, guid: 3f3a3c652469f42c784283fc31edb120, type: 3}
+  _guitarClip: {fileID: 32900000, guid: 26bba04c4ccbe4beab19f61ce71ef90f, type: 3}
+  _combatIdleClip: {fileID: 32900000, guid: 6165bf3568ea44d8eaefa028df8ac059, type: 3}
   _beerClip: {fileID: 32900000, guid: 06f3a32646b5541799ebb655f4110fa1, type: 3}
+  _cigsClip: {fileID: 32900000, guid: 810658359d49641dcbe6168ef27350c3, type: 3}
+  _attackClips:
+  - {fileID: 32900000, guid: a45f1cc9add8442038852146a724f390, type: 3}
+  - {fileID: 32900000, guid: a2a2e6b8395c0476b9faff234f841ff7, type: 3}
+  - {fileID: 32900000, guid: 7513d25de7afe417f9e75687a920660a, type: 3}
+  - {fileID: 32900000, guid: 0c6baac72066249b9aa77b0c7cc04b9d, type: 3}
+  - {fileID: 32900000, guid: 720b1c5f118b94f06bc7315cdc01773f, type: 3}
+  - {fileID: 32900000, guid: 4590c1a202cf2437c9610bdd10e5b892, type: 3}
+  - {fileID: 32900000, guid: 636457fed52f54ffb888c3489f25298c, type: 3}
+  - {fileID: 32900000, guid: 7d2f430eff43648e4b1679f4082f5bf8, type: 3}
+  - {fileID: 32900000, guid: afc83a77d839a4384b0ea36c83d07f13, type: 3}
+  - {fileID: 32900000, guid: a78b2954a38f64dbdaebf0594cb18889, type: 3}
   _bodyVideoScreen: {fileID: 252267507}
   _cameraVideoScreen: {fileID: 1613508545}
 --- !u!1 &1672608000
@@ -20309,6 +20337,7 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 759256661}
   - {fileID: 1882539839}
   - {fileID: 1625671573}
   - {fileID: 330585546}
@@ -20322,7 +20351,6 @@ SceneRoots:
   - {fileID: 1243103627}
   - {fileID: 982092240}
   - {fileID: 494105623}
-  - {fileID: 759256661}
   - {fileID: 1918277907}
   - {fileID: 1456024686}
   - {fileID: 927988048}

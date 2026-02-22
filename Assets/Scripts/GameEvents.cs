@@ -23,9 +23,6 @@ public static class GameEvents
     public static Action<float> OnMidLoopTimingUpdate;
     public static Action OnMidLoopTimingEnd;
     
-    //Behaviour
-    public static Action<bool> OnTVStatusChanged;
-    
     //Interactable
     public static Action<IInteractable> OnInteractableFocus;
     public static Action OnInteractableUnFocused;
@@ -40,4 +37,9 @@ public static class GameEvents
     
     //Guitars
     public static Action<GuitarType> OnGuitarUpdate;
+    
+    //Combat
+    public static Action OnCombatStart;
+    public static Action OnCombatEnd;
+    public static Action OnAttack;
 }

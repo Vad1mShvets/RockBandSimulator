@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -6,159 +5,216 @@ public class HandsAnimationController : MonoBehaviour
 {
     [SerializeField] private VideoPlayer _videoPlayer;
 
-    [Header("Clips")]
-    [SerializeField] private VideoClip _guitarClip;
-    [SerializeField] private VideoClip _walkClip;
+    [Header("Base Clips")]
     [SerializeField] private VideoClip _idleClip;
-    [SerializeField] private VideoClip _cigsClip;
+    [SerializeField] private VideoClip _walkClip;
+
+    [Header("Mode Clips")]
+    [SerializeField] private VideoClip _guitarClip;
+
+    [Header("Override Clips")]
     [SerializeField] private VideoClip _beerClip;
+    [SerializeField] private VideoClip _cigsClip;
+    [SerializeField] private VideoClip[] _attackClips;
 
     [Header("Screens")]
     [SerializeField] private GameObject _bodyVideoScreen;
     [SerializeField] private GameObject _cameraVideoScreen;
 
-    private readonly Dictionary<AnimationState, VideoClip> _clips = new();
+    private BaseState _baseState = BaseState.Idle;
+    private ModeState _mode = ModeState.Normal;
+    private OverrideState _override = OverrideState.None;
 
-    private AnimationState _currentState;
-    private bool _isGuitarMode;
-    private bool _isItemPlaying;
-    private bool _isWalking;
+    private VideoClip _currentClip;
+
+    private enum BaseState
+    {
+        Idle,
+        Walking
+    }
+
+    private enum ModeState
+    {
+        Normal,
+        Guitar,
+        Combat
+    }
+
+    private enum OverrideState
+    {
+        None,
+        Item,
+        Attack
+    }
 
     private void Awake()
     {
-        _clips[AnimationState.GuitarPlaying] = _guitarClip;
-        _clips[AnimationState.Walking] = _walkClip;
-        _clips[AnimationState.Idle] = _idleClip;
+        _videoPlayer.playOnAwake = false;
+        _videoPlayer.waitForFirstFrame = true;
+        _videoPlayer.loopPointReached += OnVideoFinished;
 
-        GameEvents.OnCallingConcertStart += EnterGuitarMode;
-        GameEvents.OnCallingRehearsalStart += EnterGuitarMode;
-        GameEvents.OnConcertFinished += ExitGuitarMode;
+        GameEvents.OnWalkingStart += () =>
+        {
+            _baseState = BaseState.Walking;
+            TryResolve();
+        };
 
-        GameEvents.OnWalkingStart += OnWalkingStart;
-        GameEvents.OnWalkingEnd += OnWalkingEnd;
+        GameEvents.OnWalkingEnd += () =>
+        {
+            _baseState = BaseState.Idle;
+            TryResolve();
+        };
 
-        GameEvents.OnInventoryItemUsed += OnInventoryItemUsed;
+        GameEvents.OnCallingConcertStart += () =>
+        {
+            _mode = ModeState.Guitar;
+            TryResolve();
+        };
+
+        GameEvents.OnConcertFinished += () =>
+        {
+            _mode = ModeState.Normal;
+            TryResolve();
+        };
+
+        GameEvents.OnCombatStart += () =>
+        {
+            _mode = ModeState.Combat;
+            TryResolve();
+        };
+
+        GameEvents.OnCombatEnd += () =>
+        {
+            _mode = ModeState.Normal;
+            TryResolve();
+        };
+
+        GameEvents.OnInventoryItemUsed += OnItemUsed;
+
+        GameEvents.OnAttack += PlayAttack;
     }
 
     private void Start()
     {
-        SetState(AnimationState.Idle, true);
+        Resolve();
     }
 
-    private void EnterGuitarMode()
-    {
-        _isGuitarMode = true;
-        SetState(AnimationState.GuitarPlaying, true);
-    }
+    // ========================= STATE =========================
 
-    private void ExitGuitarMode()
+    private void TryResolve()
     {
-        _isGuitarMode = false;
-        ResolveBaseState();
-    }
-
-    private void OnWalkingStart()
-    {
-        _isWalking = true;
-        SetState(AnimationState.Walking);
-    }
-
-    private void OnWalkingEnd()
-    {
-        _isWalking = false;
-        SetState(AnimationState.Idle);
-    }
-
-    private void OnInventoryItemUsed(InteractableTypes item)
-    {
-        if (_isGuitarMode || _isItemPlaying)
+        if (_override != OverrideState.None)
             return;
 
-        switch (item)
-        {
-            case InteractableTypes.Beer:
-                PlayItemOnce(_beerClip);
-                break;
-
-            case InteractableTypes.Cigs:
-                PlayItemOnce(_cigsClip);
-                break;
-        }
+        Resolve();
     }
 
-    private void PlayItemOnce(VideoClip clip)
+    private void Resolve()
     {
-        if (!clip)
+        if (_override != OverrideState.None)
             return;
 
-        CancelInvoke(nameof(ReturnFromItem));
-
-        _isItemPlaying = true;
-
-        _videoPlayer.isLooping = false;
-        _videoPlayer.clip = clip;
-        _videoPlayer.Play();
-
-        _cameraVideoScreen.SetActive(true);
-        _bodyVideoScreen.SetActive(false);
-
-        Invoke(nameof(ReturnFromItem), Mathf.Max(0.05f, (float)clip.length));
-    }
-
-    private void ReturnFromItem()
-    {
-        _isItemPlaying = false;
-        ResolveBaseState();
-    }
-
-    private void ResolveBaseState()
-    {
-        if (_isGuitarMode)
+        if (_mode == ModeState.Guitar)
         {
-            SetState(AnimationState.GuitarPlaying, true);
+            PlayLoop(_guitarClip);
             return;
         }
 
-        SetState(_isWalking ? AnimationState.Walking : AnimationState.Idle, true);
+        PlayLoop(_baseState == BaseState.Walking ? _walkClip : _idleClip);
     }
 
-    private void SetState(AnimationState newState, bool force = false)
+    private void PlayLoop(VideoClip clip)
     {
-        if (_isItemPlaying)
+        if (!clip || _currentClip == clip)
             return;
 
-        if (_isGuitarMode && !force)
-            return;
+        _currentClip = clip;
 
-        if (!_clips.TryGetValue(newState, out var clip) || !clip)
-            return;
-
-        if (!force && _currentState == newState)
-            return;
-
-        _currentState = newState;
-
+        _videoPlayer.Stop();
         _videoPlayer.isLooping = true;
         _videoPlayer.clip = clip;
         _videoPlayer.Play();
 
-        UpdateVideoScreenPosition(newState);
+        UpdateScreen(true);
     }
 
-    private void UpdateVideoScreenPosition(AnimationState state)
-    {
-        var bodyVideo = state is AnimationState.GuitarPlaying
-            or AnimationState.Walking
-            or AnimationState.Idle;
+    // ========================= OVERRIDES =========================
 
-        _bodyVideoScreen.SetActive(bodyVideo);
-        _cameraVideoScreen.SetActive(!bodyVideo);
+    private void PlayAttack()
+    {
+        if (_override != OverrideState.None)
+            return;
+
+        if (_attackClips == null || _attackClips.Length == 0)
+            return;
+
+        var clip = _attackClips[Random.Range(0, _attackClips.Length)];
+        if (!clip)
+            return;
+
+        StartOverride(clip, OverrideState.Attack);
     }
 
-    private enum AnimationState
+    private void OnItemUsed(InteractableTypes item)
     {
-        GuitarPlaying,
-        Walking,
-        Idle
+        if (_override != OverrideState.None)
+            return;
+
+        VideoClip clip = null;
+
+        switch (item)
+        {
+            case InteractableTypes.Beer:
+                clip = _beerClip;
+                break;
+            case InteractableTypes.Cigs:
+                clip = _cigsClip;
+                break;
+        }
+
+        if (!clip)
+            return;
+
+        StartOverride(clip, OverrideState.Item);
+    }
+
+    private void StartOverride(VideoClip clip, OverrideState state)
+    {
+        _override = state;
+        _currentClip = clip;
+
+        _videoPlayer.Stop();
+        _videoPlayer.isLooping = false;
+        _videoPlayer.clip = clip;
+
+        _videoPlayer.prepareCompleted += OnPrepared;
+        _videoPlayer.Prepare();
+
+        // временно скрываем экран, чтобы не показать старый кадр
+        _bodyVideoScreen.SetActive(false);
+        _cameraVideoScreen.SetActive(false);
+    }
+
+    private void OnPrepared(VideoPlayer player)
+    {
+        _videoPlayer.prepareCompleted -= OnPrepared;
+
+        _videoPlayer.Play();
+        UpdateScreen(false);
+    }
+
+    private void OnVideoFinished(VideoPlayer player)
+    {
+        if (_override == OverrideState.None)
+            return;
+
+        _override = OverrideState.None;
+        Resolve();
+    }
+
+    private void UpdateScreen(bool body)
+    {
+        _bodyVideoScreen.SetActive(body);
+        _cameraVideoScreen.SetActive(!body);
     }
 }
