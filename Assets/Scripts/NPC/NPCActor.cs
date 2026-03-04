@@ -27,6 +27,11 @@ public class NPCActor : MonoBehaviour
         Mover.enabled = true;
     }
 
+    public void PlayAnimation(string animation)
+    {
+        Animator.CrossFade(animation, 0.15f);
+    }
+
     public void EnterAnimationAction(string animation)
     {
         Animator.SetBool(InAction, true);

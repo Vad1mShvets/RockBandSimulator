@@ -6,6 +6,10 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private float _attackCooldown = 0.6f;
     [SerializeField] private float _exitCombatCooldown = 5f;
 
+    [Space]
+    [SerializeField] private float _radius = 1;
+    [SerializeField] private Vector3 _radiusOffset;
+
     private float _cooldown;
     private bool _inCombat;
 
@@ -34,6 +38,16 @@ public class PlayerCombat : MonoBehaviour
 
         _cooldown = _attackCooldown;
 
+        var collidersInRange = Physics.OverlapSphere(transform.position + transform.forward + _radiusOffset, _radius);
+        foreach (var collider in collidersInRange)
+        {
+            var npcActivityRunner = collider.GetComponentInParent<IDamageable>();
+            if (npcActivityRunner != null)
+            {
+                npcActivityRunner.TakeDamage(new DamageData(25, transform));
+            }
+        }
+
         GameEvents.OnAttack?.Invoke();
     }
 
@@ -55,5 +69,11 @@ public class PlayerCombat : MonoBehaviour
 
         _inCombat = false;
         GameEvents.OnCombatEnd?.Invoke();
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position + transform.forward + _radiusOffset, _radius);
     }
 }
