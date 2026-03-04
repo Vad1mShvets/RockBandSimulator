@@ -5008,7 +5008,7 @@ NavMeshAgent:
   m_Speed: 3
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 5000
+  m_AngularSpeed: 15000
   m_StoppingDistance: 0.5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -5076,8 +5076,7 @@ MonoBehaviour:
   _agent: {fileID: 532529630}
   _animator: {fileID: 532529632}
   _velocityParam: Velocity
-  _arriveDistance: 0.15
-  _walkAnimationSpeed: 1.5
+  _arriveDistance: 0.25
 --- !u!114 &532529636
 MonoBehaviour:
   m_ObjectHideFlags: 0

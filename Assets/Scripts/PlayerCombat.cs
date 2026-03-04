@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour
 {
+    private Vector3 OverlapPosition => transform.position + transform.forward + _radiusOffset;
+    
     [SerializeField] private InputReader _input;
     [SerializeField] private float _attackCooldown = 0.6f;
     [SerializeField] private float _exitCombatCooldown = 5f;
@@ -38,7 +40,7 @@ public class PlayerCombat : MonoBehaviour
 
         _cooldown = _attackCooldown;
 
-        var collidersInRange = Physics.OverlapSphere(transform.position + transform.forward + _radiusOffset, _radius);
+        var collidersInRange = Physics.OverlapSphere(OverlapPosition, _radius);
         foreach (var collider in collidersInRange)
         {
             var npcActivityRunner = collider.GetComponentInParent<IDamageable>();
@@ -74,6 +76,6 @@ public class PlayerCombat : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position + transform.forward + _radiusOffset, _radius);
+        Gizmos.DrawWireSphere(OverlapPosition, _radius);
     }
 }

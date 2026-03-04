@@ -12,11 +12,6 @@ public class NPCNavMeshMover : MonoBehaviour
     [Header("Tuning")]
     [SerializeField] private float _arriveDistance = 0.15f;
 
-    [Header("Animations")]
-    [SerializeField] private float _walkAnimationSpeed = 1.5f;
-
-    private float _animSpeed;
-
     private Vector3 _target;
     private bool _hasTarget;
 
@@ -28,25 +23,32 @@ public class NPCNavMeshMover : MonoBehaviour
         UpdateAnimator();
     }
 
-    public void SetActiveNavMeshAgent(bool value)
-    {
-        _agent.enabled = value;
-    }
-
     // ========================= MOVEMENT =========================
 
-    public void MoveTo(Vector3 worldPos)
+    public void MoveTo(Vector3 point)
     {
-        Arrived = false;
-        _hasTarget = true;
-
-        if (NavMesh.SamplePosition(worldPos, out var hit, 2f, NavMesh.AllAreas))
-            _target = hit.position;
-        else
-            _target = worldPos;
-
         _agent.isStopped = false;
-        _agent.SetDestination(_target);
+        _agent.SetDestination(point);
+    }
+
+    public void Stop()
+    {
+        if (!_agent.enabled)
+            return;
+
+        _agent.isStopped = true;
+        _agent.ResetPath();
+    }
+
+    public void SetActiveNavMeshAgent(bool active)
+    {
+        if (_agent.enabled == active)
+            return;
+
+        if (!active)
+            _agent.ResetPath();
+
+        _agent.enabled = active;
     }
 
     // ========================= ARRIVAL =========================
@@ -76,17 +78,6 @@ public class NPCNavMeshMover : MonoBehaviour
 
     private void UpdateAnimator()
     {
-        if (!_animator)
-            return;
-
-        var speed = _agent.velocity.magnitude;
-        
-        _animator.SetFloat(_velocityParam, speed);
-        
-        var playback = speed / Mathf.Max(_walkAnimationSpeed, 0.01f);
-        
-        playback = Mathf.Clamp(playback, 0f, 2.5f);
-
-        _animator.speed = playback;
+        _animator.SetFloat(_velocityParam, _agent.velocity.magnitude);
     }
 }
