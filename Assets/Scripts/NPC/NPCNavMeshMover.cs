@@ -5,8 +5,8 @@ using UnityEngine.AI;
 public class NPCNavMeshMover : MonoBehaviour
 {
     [Header("Refs")]
+    [SerializeField] private NPCActor _actor;
     [SerializeField] private NavMeshAgent _agent;
-    [SerializeField] private Animator _animator;
     [SerializeField] private string _velocityParam = "Velocity";
 
     [Header("Tuning")]
@@ -19,6 +19,9 @@ public class NPCNavMeshMover : MonoBehaviour
 
     private void Update()
     {
+        if (!_agent.enabled)
+            return;
+        
         UpdateArrived();
         UpdateAnimator();
     }
@@ -27,6 +30,13 @@ public class NPCNavMeshMover : MonoBehaviour
 
     public void MoveTo(Vector3 point)
     {
+        if (!_agent.enabled)
+            return;
+        
+        _target = point;
+        _hasTarget = true;
+        Arrived = false;
+
         _agent.isStopped = false;
         _agent.SetDestination(point);
     }
@@ -38,6 +48,8 @@ public class NPCNavMeshMover : MonoBehaviour
 
         _agent.isStopped = true;
         _agent.ResetPath();
+
+        _hasTarget = false;
     }
 
     public void SetActiveNavMeshAgent(bool active)
@@ -50,12 +62,17 @@ public class NPCNavMeshMover : MonoBehaviour
 
         _agent.enabled = active;
     }
+    
+    public void SetActiveAutoRotation(bool value)
+    {
+        _agent.updateRotation = value;
+    }
 
     // ========================= ARRIVAL =========================
 
     private void UpdateArrived()
     {
-        if (!_hasTarget)
+        if (!_hasTarget || !_agent.enabled)
             return;
 
         var pos = transform.position;
@@ -78,6 +95,6 @@ public class NPCNavMeshMover : MonoBehaviour
 
     private void UpdateAnimator()
     {
-        _animator.SetFloat(_velocityParam, _agent.velocity.magnitude);
+        _actor.Animator.SetFloat(_velocityParam, _agent.velocity.magnitude);
     }
 }

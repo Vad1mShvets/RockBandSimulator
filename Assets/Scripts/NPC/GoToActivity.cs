@@ -3,6 +3,7 @@ using UnityEngine;
 public class GoToActivity : INPCActivity
 {
     private Transform _target;
+
     public bool IsFinished { get; private set; }
 
     public GoToActivity(Transform target)
@@ -12,15 +13,17 @@ public class GoToActivity : INPCActivity
 
     public void Start(NPCActor actor)
     {
-        IsFinished = false;
-        actor.Mover.MoveTo(_target.position);
+        actor.NavMeshMover.MoveTo(_target.position);
     }
 
-    public void Tick(NPCActor actor, float dt)
+    public void Tick(NPCActor actor, float deltaTime)
     {
-        if (actor.Mover.Arrived)
+        if (actor.NavMeshMover.Arrived)
             IsFinished = true;
     }
 
-    public void Stop(NPCActor actor) { }
+    public void Stop(NPCActor actor)
+    {
+        actor.NavMeshMover.Stop();
+    }
 }

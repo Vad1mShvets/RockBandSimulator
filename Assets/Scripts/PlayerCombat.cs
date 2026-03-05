@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour
@@ -11,6 +12,8 @@ public class PlayerCombat : MonoBehaviour
     [Space]
     [SerializeField] private float _radius = 1;
     [SerializeField] private Vector3 _radiusOffset;
+    
+    private readonly HashSet<IDamageable> _hitTargets = new();
 
     private float _cooldown;
     private bool _inCombat;
@@ -37,16 +40,21 @@ public class PlayerCombat : MonoBehaviour
             return;
 
         EnterCombatMode();
-
         _cooldown = _attackCooldown;
 
+        _hitTargets.Clear();
+
         var collidersInRange = Physics.OverlapSphere(OverlapPosition, _radius);
+
         foreach (var collider in collidersInRange)
         {
-            var npcActivityRunner = collider.GetComponentInParent<IDamageable>();
-            if (npcActivityRunner != null)
+            var damageable = collider.GetComponentInParent<IDamageable>();
+            if (damageable == null)
+                continue;
+
+            if (_hitTargets.Add(damageable))
             {
-                npcActivityRunner.TakeDamage(new DamageData(25, transform));
+                damageable.TakeDamage(new DamageData(25, transform));
             }
         }
 

@@ -3,43 +3,61 @@ using UnityEngine;
 [RequireComponent(typeof(NPCNavMeshMover))]
 public class NPCActor : MonoBehaviour
 {
-    public NPCNavMeshMover Mover { get; private set; }
-    public Animator Animator { get; private set; }
+    public NPCNavMeshMover NavMeshMover => _navMeshMover;
+    public NPCActivityRunner ActivityRunner => _activityRunner;
+    public Animator Animator => _animator;
+    
+    [SerializeField] private NPCNavMeshMover _navMeshMover;
+    [SerializeField] private NPCActivityRunner _activityRunner;
+    [SerializeField] private Animator _animator;
+    [SerializeField] private RagdollController _ragdoll;
     
     private static readonly int InAction = Animator.StringToHash("InAction");
+    private static readonly int InCombat = Animator.StringToHash("InCombat");
 
-    private void Awake()
+    public void Die()
     {
-        Mover = GetComponent<NPCNavMeshMover>();
-        Animator = GetComponentInChildren<Animator>();
-    }
+        _activityRunner.Reset();
 
+        _navMeshMover.Stop();
+
+        _animator.enabled = false;
+        _navMeshMover.SetActiveNavMeshAgent(false);
+        _navMeshMover.SetActiveAutoRotation(false);
+
+        _ragdoll.EnableRagdoll();
+    }
     public void SnapTo(Transform point)
     {
-        Mover.SetActiveNavMeshAgent(false);
-        Mover.enabled = false;
+        _navMeshMover.SetActiveNavMeshAgent(false);
+        _navMeshMover.enabled = false;
         transform.SetPositionAndRotation(point.position, point.rotation);
     }
     
     public void ReleaseFromSnap()
     {
-        Mover.SetActiveNavMeshAgent(true);
-        Mover.enabled = true;
+        _navMeshMover.SetActiveNavMeshAgent(true);
+        _navMeshMover.enabled = true;
     }
 
     public void PlayAnimation(string animation)
     {
-        Animator.CrossFade(animation, 0.15f);
+        _animator.CrossFade(animation, 0.15f);
     }
 
     public void EnterAnimationAction(string animation)
     {
-        Animator.SetBool(InAction, true);
-        Animator.CrossFade(animation, 0.15f);
+        _animator.SetBool(InAction, true);
+        _animator.CrossFade(animation, 0.15f);
     }
 
     public void ExitAnimationAction()
     {
-        Animator.SetBool(InAction, false);
+        _animator.SetBool(InAction, false);
+    }
+
+    public void EnterAnimatorCombatState()
+    {
+        _animator.SetBool(InCombat, true);
     }
 }

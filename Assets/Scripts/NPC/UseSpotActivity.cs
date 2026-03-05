@@ -18,14 +18,14 @@ public class UseSpotActivity : INPCActivity
     public void Start(NPCActor actor)
     {
         IsFinished = false;
-        actor.Mover.MoveTo(_spot.transform.position);
+        actor.NavMeshMover.MoveTo(_spot.transform.position);
     }
 
     public void Tick(NPCActor actor, float dt)
     {
         if (!_snapped)
         {
-            if (!actor.Mover.Arrived)
+            if (!actor.NavMeshMover.Arrived)
                 return;
             
             actor.SnapTo(_spot.transform);
