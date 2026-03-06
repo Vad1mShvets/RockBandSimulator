@@ -302,7 +302,7 @@ BlendTree:
   m_Name: Dance
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: -203655887218126122, guid: b5d31b09858a34e2db6973e5cdb30e7a,
+    m_Motion: {fileID: 7080741190041627570, guid: 625c19b3577f742e8a6b31d2f78486d1,
       type: 3}
     m_Threshold: 0
     m_Position: {x: 0, y: 0}
@@ -311,7 +311,7 @@ BlendTree:
     m_DirectBlendParameter: RandomSeed
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: -203655887218126122, guid: 299f00f6c547640048ee1153246b20c5,
+    m_Motion: {fileID: -203655887218126122, guid: b5d31b09858a34e2db6973e5cdb30e7a,
       type: 3}
     m_Threshold: 0.33333334
     m_Position: {x: 0, y: 0}
@@ -320,7 +320,7 @@ BlendTree:
     m_DirectBlendParameter: RandomSeed
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: -203655887218126122, guid: 0a36ea154a4834a57a7f1d8a1d21bdd0,
+    m_Motion: {fileID: 1366296773396398698, guid: 67b053a8c1ee04fb79d28a57e0ef6082,
       type: 3}
     m_Threshold: 0.6666667
     m_Position: {x: 0, y: 0}
@@ -329,7 +329,7 @@ BlendTree:
     m_DirectBlendParameter: RandomSeed
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: -203655887218126122, guid: 8866a1dae181d49efbbbafe23fde98f3,
+    m_Motion: {fileID: -9055367630572332489, guid: 7a388da6eefda4c41bcab7bc36d64dce,
       type: 3}
     m_Threshold: 1
     m_Position: {x: 0, y: 0}

@@ -20,7 +20,12 @@ public class RagdollController : MonoBehaviour
         foreach (var rb in _bodies)
         {
             rb.isKinematic = !enabled;
-            rb.velocity = Vector3.zero;
+
+            if (enabled)
+            {
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
         }
     }
 }
