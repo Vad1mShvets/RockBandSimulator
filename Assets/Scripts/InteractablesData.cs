@@ -1,18 +1,21 @@
 using UnityEngine;
 
-public class InteractablesData : MonoBehaviour
+public static class InteractableManager
 {
-    public static InteractablesData Instance;
+    private const string INTERACTABLES_PATH = "Interactables";
     
-    [SerializeField] private InteractableData[] _interactablesData;
+    private static InteractableData[] _interactablesData;
+    
+    private static bool _inited;
 
-    private void Awake()
+    public static InteractableData GetInteractableData(InteractableTypes interactableType)
     {
-        Instance = this;
-    }
-
-    public InteractableData GetInteractableData(InteractableTypes interactableType)
-    {
+        if (!_inited)
+        {
+            _interactablesData = Resources.LoadAll<InteractableData>(INTERACTABLES_PATH);
+            _inited = true;
+        }
+        
         for (int i = 0; i < _interactablesData.Length; i++)
         {
             if (!_interactablesData[i]) continue;

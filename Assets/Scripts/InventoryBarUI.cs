@@ -29,7 +29,7 @@ public class InventoryBarUI : MonoBehaviour
         foreach (var item in InventoryManager.InventoryItems)
         {
             var newItem = Instantiate(_baseItem, _baseItem.transform.parent);
-            newItem.Setup(InteractablesData.Instance.GetInteractableData(item.Key).Icon, item.Value);
+            newItem.Setup(InteractableManager.GetInteractableData(item.Key).Icon, item.Value);
             
             _items.Add(newItem);
             newItem.gameObject.SetActive(true);

@@ -55,6 +55,7 @@ public class PlayerCombat : MonoBehaviour
             if (_hitTargets.Add(damageable))
             {
                 damageable.TakeDamage(new DamageData(25, transform));
+                SoundsManager.PlaySound(SoundsManager.SoundType.StrikeHit);
             }
         }
 
