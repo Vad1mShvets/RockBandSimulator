@@ -142,17 +142,7 @@ public class HandsAnimationController : MonoBehaviour
 
     private void PlayAttack()
     {
-        if (_override != OverrideState.None)
-            return;
-
-        if (_attackClips == null || _attackClips.Length == 0)
-            return;
-
-        var clip = _attackClips[Random.Range(0, _attackClips.Length)];
-        if (!clip)
-            return;
-
-        StartOverride(clip, OverrideState.Attack);
+        StartOverride(_attackClips[Random.Range(0, _attackClips.Length)], OverrideState.Attack);
     }
 
     private void OnItemUsed(InteractableTypes item)

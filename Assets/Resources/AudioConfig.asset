@@ -15,5 +15,16 @@ MonoBehaviour:
   Sounds:
   - Type: 0
     Clips:
-    - {fileID: 8300000, guid: b609c3726205b43729fe4f4d5c5238e0, type: 3}
+    - {fileID: 8300000, guid: ee9c5952a18ba41fc9f9c1358e243c6a, type: 3}
+    - {fileID: 8300000, guid: 4e7a8e12964194b25839158555eaff06, type: 3}
+    - {fileID: 8300000, guid: 65eab792f7dae487c82afd14f5750853, type: 3}
+    - {fileID: 8300000, guid: 65e443a2a0a994dc99722dbd3c2a48b6, type: 3}
+    Volume: 0.6
+  - Type: 1
+    Clips:
+    - {fileID: 8300000, guid: 988690e2111c949a1aebc87b60a4408d, type: 3}
+    - {fileID: 8300000, guid: 70e9666585762430a901d0acb501a020, type: 3}
+    - {fileID: 8300000, guid: 19886060309c6402f90c362b6183fec0, type: 3}
+    - {fileID: 8300000, guid: b6e2494ed46104082850b8f96ffde433, type: 3}
+    - {fileID: 8300000, guid: c84b34458a31a4412a6cf98ce96b46a6, type: 3}
     Volume: 1
