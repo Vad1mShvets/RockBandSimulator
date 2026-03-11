@@ -3276,13 +3276,13 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 99ef34944b9b24377a16428118fe5478,
         type: 3}
       propertyPath: m_Name
-      value: Evgen (1)
+      value: Akim
       objectReference: {fileID: 0}
     - target: {fileID: 5601484285250034516, guid: 99ef34944b9b24377a16428118fe5478,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 471334b9fd8db4f9eafc66ca7dca645f, type: 2}
+      objectReference: {fileID: 2100000, guid: d10b8128374424229a92aabe02268991, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6667,7 +6667,7 @@ Transform:
   m_GameObject: {fileID: 512229804}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -1.12, y: 0.435, z: -12.74}
+  m_LocalPosition: {x: -1.12, y: 0.5, z: -12.74}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -12494,7 +12494,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 1057979948}
-  _seedChangeSpeed: 0.05
+  _seedChangeSpeed: 1
   _speedMinMax: {x: 0.9, y: 1.1}
 --- !u!1001 &1061633891
 PrefabInstance:
@@ -16539,7 +16539,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 1480608066}
-  _seedChangeSpeed: 0.05
+  _seedChangeSpeed: 1
   _speedMinMax: {x: 0.9, y: 1.1}
 --- !u!95 &1480608066
 Animator:
@@ -20019,12 +20019,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 99ef34944b9b24377a16428118fe5478,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.3
+      value: 1.1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 99ef34944b9b24377a16428118fe5478,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.15
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 99ef34944b9b24377a16428118fe5478,
         type: 3}
@@ -20089,13 +20089,13 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 99ef34944b9b24377a16428118fe5478,
         type: 3}
       propertyPath: m_Name
-      value: Evgen (1)
+      value: Danil
       objectReference: {fileID: 0}
     - target: {fileID: 5601484285250034516, guid: 99ef34944b9b24377a16428118fe5478,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 471334b9fd8db4f9eafc66ca7dca645f, type: 2}
+      objectReference: {fileID: 2100000, guid: d5e28ead5ac7c4e59bf7295898b4fd15, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

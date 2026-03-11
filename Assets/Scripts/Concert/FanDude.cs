@@ -7,7 +7,7 @@ public class FanDude : MonoBehaviour
     private static readonly int DoTransition = Animator.StringToHash("DoTransition");
 
     [SerializeField] private Animator _animator;
-    [SerializeField] private float _seedChangeSpeed = 0.05f;
+    [SerializeField] private float _seedChangeSpeed = 1f;
     [SerializeField] private Vector2 _speedMinMax = new(0.9f, 1.1f);
 
     private float _currentSeed;

@@ -13,6 +13,7 @@ public class CrowdManager : MonoBehaviour
     [SerializeField] private Transform _lookTarger;
     [SerializeField] private Vector3 _zoneSize;
     [SerializeField] private float _dudeZoneSize = 0.8f;
+    [SerializeField] private float _dudeYOffset = -0.175f;
 
     [SerializeField] private int _minCount = 15;
     [SerializeField] private int _maxCount = 30;
@@ -96,7 +97,7 @@ public class CrowdManager : MonoBehaviour
 
         return transform.position + new Vector3(
             Random.Range(-half.x, half.x),
-            0f,
+            _dudeYOffset,
             Random.Range(-half.z, half.z)
         );
     }
