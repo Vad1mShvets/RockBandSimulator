@@ -19,6 +19,7 @@ public class FightActivity : INPCActivity
 
     public void Start(NPCActor actor)
     {
+        actor.EnterAnimatorCombatState();
         actor.NavMeshMover.SetActiveAutoRotation(false);
     }
 
@@ -66,7 +67,7 @@ public class FightActivity : INPCActivity
 
     private void PlayRandomPunch(NPCActor actor)
     {
-        actor.PlayAnimation($"{PUNCH_TAG}{Random.Range(0, PUNCH_ANIMATIONS_COUNT)}");
+        actor.EnterAnimationAction($"{PUNCH_TAG}{Random.Range(0, PUNCH_ANIMATIONS_COUNT)}");
     }
 
     public void Stop(NPCActor actor) { }

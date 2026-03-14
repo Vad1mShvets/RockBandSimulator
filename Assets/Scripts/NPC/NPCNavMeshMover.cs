@@ -9,36 +9,37 @@ public class NPCNavMeshMover : MonoBehaviour
     [SerializeField] private NavMeshAgent _agent;
     [SerializeField] private string _velocityParam = "Velocity";
 
-    [Header("Tuning")]
-    [SerializeField] private float _arriveDistance = 0.15f;
-
-    private Vector3 _target;
     private bool _hasTarget;
+    private int _velocityHash;
 
     public bool Arrived { get; private set; }
 
+    private void Awake()
+    {
+        _velocityHash = Animator.StringToHash(_velocityParam);
+    }
+
     private void Update()
     {
-        if (!_agent.enabled)
+        if (!_agent.enabled || !_agent.isOnNavMesh)
             return;
-        
+
         UpdateArrived();
         UpdateAnimator();
     }
-
-    // ========================= MOVEMENT =========================
 
     public void MoveTo(Vector3 point)
     {
         if (!_agent.enabled)
             return;
-        
-        _target = point;
-        _hasTarget = true;
+
+        if (!_agent.SetDestination(point))
+            return;
+
         Arrived = false;
+        _hasTarget = true;
 
         _agent.isStopped = false;
-        _agent.SetDestination(point);
     }
 
     public void Stop()
@@ -62,39 +63,41 @@ public class NPCNavMeshMover : MonoBehaviour
 
         _agent.enabled = active;
     }
-    
+
     public void SetActiveAutoRotation(bool value)
     {
         _agent.updateRotation = value;
     }
 
-    // ========================= ARRIVAL =========================
-
     private void UpdateArrived()
     {
-        if (!_hasTarget || !_agent.enabled)
+        if (!_hasTarget)
             return;
 
-        var pos = transform.position;
-        var target = _target;
+        if (_agent.pathPending)
+            return;
 
-        pos.y = 0f;
-        target.y = 0f;
-
-        var dist = Vector3.Distance(pos, target);
-
-        if (dist <= Mathf.Max(_arriveDistance, _agent.stoppingDistance))
+        if (_agent.pathStatus == NavMeshPathStatus.PathInvalid)
         {
-            Arrived = true;
-            _hasTarget = false;
-            _agent.ResetPath();
+            Stop();
+            return;
         }
-    }
 
-    // ========================= ANIMATION =========================
+        if (_agent.remainingDistance > _agent.stoppingDistance)
+            return;
+
+        if (_agent.velocity.sqrMagnitude > 0.01f)
+            return;
+
+        Arrived = true;
+        _hasTarget = false;
+
+        _agent.isStopped = true;
+        _agent.ResetPath();
+    }
 
     private void UpdateAnimator()
     {
-        _actor.Animator.SetFloat(_velocityParam, _agent.velocity.magnitude);
+        _actor.Animator.SetFloat(_velocityHash, _agent.velocity.magnitude);
     }
 }

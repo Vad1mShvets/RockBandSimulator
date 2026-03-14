@@ -15,6 +15,8 @@ public class NPCActivityRunner : MonoBehaviour
     public void Run(INPCActivity activity)
     {
         Debug.Log($"RUN ACTIVITY: {activity.GetType().Name}");
+        
+        _actor.ExitAnimationAction();
 
         _current?.Stop(_actor);
         _current = activity;

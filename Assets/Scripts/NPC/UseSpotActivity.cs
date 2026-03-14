@@ -7,17 +7,22 @@ public class UseSpotActivity : INPCActivity
     private float _timer;
     private bool _snapped;
 
+    private string _animation;
+
     public bool IsFinished { get; private set; }
 
-    public UseSpotActivity(NPCActivitySpot spot, float duration)
+    public UseSpotActivity(NPCActivitySpot spot, float duration, string animation)
     {
         _spot = spot;
         _duration = duration;
+        _animation = animation;
     }
 
     public void Start(NPCActor actor)
     {
         IsFinished = false;
+        _snapped = false;
+        
         actor.NavMeshMover.MoveTo(_spot.transform.position);
     }
 
@@ -27,9 +32,9 @@ public class UseSpotActivity : INPCActivity
         {
             if (!actor.NavMeshMover.Arrived)
                 return;
-            
+
             actor.SnapTo(_spot.transform);
-            actor.EnterAnimationAction(_spot.name);
+            actor.EnterAnimationAction(_animation);
 
             _snapped = true;
             _timer = _duration;
@@ -37,6 +42,7 @@ public class UseSpotActivity : INPCActivity
         }
 
         _timer -= dt;
+        
         if (_timer <= 0f)
             IsFinished = true;
     }
@@ -45,6 +51,5 @@ public class UseSpotActivity : INPCActivity
     {
         _spot.Release(actor);
         actor.ReleaseFromSnap();
-        actor.ExitAnimationAction();
     }
 }

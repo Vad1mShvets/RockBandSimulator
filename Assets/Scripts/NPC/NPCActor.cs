@@ -9,35 +9,45 @@ public class NPCActor : MonoBehaviour
     
     [SerializeField] private NPCNavMeshMover _navMeshMover;
     [SerializeField] private NPCActivityRunner _activityRunner;
+    [SerializeField] private NPCRoutine _routine;
     [SerializeField] private Animator _animator;
     [SerializeField] private RagdollController _ragdoll;
     
-    private static readonly int InAction = Animator.StringToHash("InAction");
-    private static readonly int InCombat = Animator.StringToHash("InCombat");
+    private static readonly int InActionBool = Animator.StringToHash("InAction");
+    private static readonly int InCombatBool = Animator.StringToHash("InCombat");
 
     public void Die()
     {
+        _routine.ClearPlan();
+        
         _activityRunner.Reset();
-
+        
         _navMeshMover.Stop();
+        ReleaseFromSnap();
 
-        _animator.enabled = false;
         _navMeshMover.SetActiveNavMeshAgent(false);
         _navMeshMover.SetActiveAutoRotation(false);
 
+        _animator.enabled = false;
+
         _ragdoll.EnableRagdoll();
     }
+    
     public void SnapTo(Transform point)
     {
         _navMeshMover.SetActiveNavMeshAgent(false);
-        _navMeshMover.enabled = false;
         transform.SetPositionAndRotation(point.position, point.rotation);
     }
     
     public void ReleaseFromSnap()
     {
         _navMeshMover.SetActiveNavMeshAgent(true);
-        _navMeshMover.enabled = true;
+    }
+
+    public void EnterAnimationAction(string animation)
+    {
+        _animator.SetBool(InActionBool, true);
+        PlayAnimation(animation);
     }
 
     public void PlayAnimation(string animation)
@@ -45,19 +55,13 @@ public class NPCActor : MonoBehaviour
         _animator.CrossFade(animation, 0.15f);
     }
 
-    public void EnterAnimationAction(string animation)
-    {
-        _animator.SetBool(InAction, true);
-        _animator.CrossFade(animation, 0.15f);
-    }
-
     public void ExitAnimationAction()
     {
-        _animator.SetBool(InAction, false);
+        _animator.SetBool(InActionBool, false);
     }
 
     public void EnterAnimatorCombatState()
     {
-        _animator.SetBool(InCombat, true);
+        _animator.SetBool(InCombatBool, true);
     }
 }
