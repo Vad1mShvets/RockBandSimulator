@@ -20,4 +20,9 @@ public class NPCActivitySpotGroup : MonoBehaviour
 
         return false;
     }
+
+    public NPCActivitySpot GetSpotHard()
+    {
+        return spots[0];
+    }
 }

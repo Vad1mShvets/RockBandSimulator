@@ -3,18 +3,43 @@ using UnityEngine;
 [RequireComponent(typeof(NPCNavMeshMover))]
 public class NPCActor : MonoBehaviour
 {
+    private static readonly int InActionBool = Animator.StringToHash("InAction");
+    private static readonly int InCombatBool = Animator.StringToHash("InCombat");
+
+    public enum NPCType
+    {
+        None,
+        Evgen,
+        Diman
+    }
+    
+    public NPCType NpcType => _npcType;
     public NPCNavMeshMover NavMeshMover => _navMeshMover;
     public NPCActivityRunner ActivityRunner => _activityRunner;
     public Animator Animator => _animator;
     
+    [SerializeField] private NPCType _npcType;
     [SerializeField] private NPCNavMeshMover _navMeshMover;
     [SerializeField] private NPCActivityRunner _activityRunner;
     [SerializeField] private NPCRoutine _routine;
     [SerializeField] private Animator _animator;
     [SerializeField] private RagdollController _ragdoll;
+
+    [Header("Concert NPC Only")] [SerializeField] private NPCActivitySpotGroup _concertActivity;
     
-    private static readonly int InActionBool = Animator.StringToHash("InAction");
-    private static readonly int InCombatBool = Animator.StringToHash("InCombat");
+    private bool _isConcertNPC => _npcType is NPCType.Evgen or NPCType.Diman;
+    
+    private void OnEnable()
+    {
+        GameEvents.OnConcertStarted += OnConcertStarted;
+        GameEvents.OnConcertFinished += OnConcertFinished;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnConcertStarted -= OnConcertStarted;
+        GameEvents.OnConcertFinished -= OnConcertFinished;
+    }
 
     public void Die()
     {
@@ -63,5 +88,29 @@ public class NPCActor : MonoBehaviour
     public void EnterAnimatorCombatState()
     {
         _animator.SetBool(InCombatBool, true);
+    }
+
+    private void OnConcertStarted(ConcertData data)
+    {
+        if (!_isConcertNPC)
+            return;
+
+        var animationName = _npcType switch
+        {
+            NPCType.Evgen => "Bass",
+            NPCType.Diman => "Drums",
+            _ => ""
+        };
+
+        ActivityRunner.Interrupt(new UseSpotActivity(_concertActivity.GetSpotHard(), float.MaxValue, animationName,
+            teleport: true));
+    }
+
+    private void OnConcertFinished()
+    {
+        if (!_isConcertNPC)
+            return;
+        
+        ActivityRunner.Reset();
     }
 }

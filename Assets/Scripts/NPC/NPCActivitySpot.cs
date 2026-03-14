@@ -4,11 +4,9 @@ public class NPCActivitySpot : MonoBehaviour
 {
     private NPCActor _occupant;
 
-    public bool IsFree => _occupant == null;
-
     public bool TryReserve(NPCActor actor)
     {
-        if (_occupant != null)
+        if (_occupant)
             return false;
 
         _occupant = actor;
