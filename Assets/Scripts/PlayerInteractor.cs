@@ -5,18 +5,17 @@ public class PlayerInteractor : MonoBehaviour
     [SerializeField] private Camera _camera;
     [SerializeField] private float _interactDistance = 3f;
     [SerializeField] private LayerMask _interactableMask;
-    [SerializeField] private InputReader _inputReader;
 
     private IInteractable _currentInteractable;
 
     private void OnEnable()
     {
-        _inputReader.Interact += Interact;
+        InputReader.Instance.Interact += Interact;
     }
 
     private void OnDisable()
     {
-        _inputReader.Interact -= Interact;
+        InputReader.Instance.Interact -= Interact;
     }
 
     private void Update()

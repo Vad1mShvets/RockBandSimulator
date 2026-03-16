@@ -20,7 +20,7 @@ public class FanDude : MonoBehaviour
         _animator.SetFloat(RandomSeed, _currentSeed);
     }
 
-    public void SetAction(CrowdManager.CrowdActionType action)
+    public void SetAction(CrowdGenerator.CrowdActionType action)
     {
         _targetSeed = Random.value;
 

@@ -1,9 +1,7 @@
 using UnityEngine;
 
-public class ConcertMusicManager : MonoBehaviour
+public class ConcertService : MonoBehaviour
 {
-    [SerializeField] private InputReader _input;
-
     [Header("Settings")]
     [SerializeField] private float _chooseWindowSeconds = 3f;
     [SerializeField] private float _perfectTimingSeconds = 1f;
@@ -58,10 +56,10 @@ public class ConcertMusicManager : MonoBehaviour
             else if (guitarType is GuitarType.Gvozdi) _currentPack = _gvozdiPack; 
         };
 
-        _input.ALoop += () => OnLoopPressed(LoopType.A);
-        _input.BLoop += () => OnLoopPressed(LoopType.B);
-        _input.CLoop += () => OnLoopPressed(LoopType.C);
-        _input.DLoop += () => OnLoopPressed(LoopType.D);
+        InputReader.Instance.ALoop += () => OnLoopPressed(LoopType.A);
+        InputReader.Instance.BLoop += () => OnLoopPressed(LoopType.B);
+        InputReader.Instance.CLoop += () => OnLoopPressed(LoopType.C);
+        InputReader.Instance.DLoop += () => OnLoopPressed(LoopType.D);
     }
 
     private void Init(TrackMask mask)

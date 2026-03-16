@@ -7,7 +7,6 @@ public class PlayerCombat : MonoBehaviour
     private Vector3 OverlapPosition => transform.position + _camera.transform.forward + _radiusOffset;
 
     [SerializeField] private Camera _camera;
-    [SerializeField] private InputReader _input;
     [SerializeField] private float _attackCooldown = 0.6f;
     [SerializeField] private float _exitCombatCooldown = 5f;
 
@@ -22,12 +21,12 @@ public class PlayerCombat : MonoBehaviour
 
     private void OnEnable()
     {
-        _input.Fire += OnAttack;
+        InputReader.Instance.Fire += OnAttack;
     }
 
     private void OnDisable()
     {
-        _input.Fire -= OnAttack;
+        InputReader.Instance.Fire -= OnAttack;
     }
 
     private void Update()

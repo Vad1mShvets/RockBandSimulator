@@ -15,7 +15,7 @@ public static class GameEvents
     public static Action OnLoopChooseTimerEnd;
     public static Action<LoopType> OnNewLoopStart;
     
-    public static Action<ConcertMusicManager.TimingState> OnLoopTimingPressed;
+    public static Action<ConcertService.TimingState> OnLoopTimingPressed;
     
     public static Action OnConcertFinished;
     

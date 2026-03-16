@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CrowdManager : MonoBehaviour
+public class CrowdGenerator : MonoBehaviour
 {
     public enum CrowdActionType
     {

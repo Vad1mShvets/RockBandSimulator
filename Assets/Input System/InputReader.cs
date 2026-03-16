@@ -4,6 +4,8 @@ using System;
 
 public class InputReader : MonoBehaviour
 {
+    public static InputReader Instance { get; private set; }
+    
     public Vector2 Move { get; private set; }
     public Vector2 Look { get; private set; }
     
@@ -14,6 +16,11 @@ public class InputReader : MonoBehaviour
     public event Action BLoop;
     public event Action CLoop;
     public event Action DLoop;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
     
     public void OnMove(InputAction.CallbackContext context)
     {

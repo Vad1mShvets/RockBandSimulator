@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private InputReader _input;
     [SerializeField] private CharacterController _characterController;
     [SerializeField] private Transform _cameraTransform;
     [SerializeField] private float _moveSpeed = 6f;
@@ -16,8 +15,8 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         RotateToCamera();
-        HandleWalkingEvents(_input.Move);
-        Move(_input.Move);
+        HandleWalkingEvents(InputReader.Instance.Move);
+        Move(InputReader.Instance.Move);
         ApplyGravity();
     }
 

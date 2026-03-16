@@ -21,9 +21,9 @@ public class ConcertLights : MonoBehaviour
         GameEvents.OnLoopTimingPressed -= OnTimingPressed;
     }
 
-    private void OnTimingPressed(ConcertMusicManager.TimingState timing)
+    private void OnTimingPressed(ConcertService.TimingState timing)
     {
-        var color = timing == ConcertMusicManager.TimingState.Perfect
+        var color = timing == ConcertService.TimingState.Perfect
             ? _perfectTimingColor
             : _badTimingColor;
 
