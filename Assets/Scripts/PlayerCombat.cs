@@ -68,6 +68,8 @@ public class PlayerCombat : MonoBehaviour
     {
         yield return new WaitForSeconds(0.15f);
         
+        ChaosManager.AddChaos(100);
+        
         damageable.TakeDamage(new DamageData(25, transform));
         SoundsManager.PlaySound(SoundsManager.SoundType.StrikeHit);
     }

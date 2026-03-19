@@ -3,9 +3,9 @@ using UnityEngine;
 public class ConcertService : MonoBehaviour
 {
     [Header("Settings")]
-    [SerializeField] private float _chooseWindowSeconds = 3f;
-    [SerializeField] private float _perfectTimingSeconds = 1f;
-    [SerializeField] private float _midLoopTimingSeconds = 0.5f;
+    [SerializeField] private float _chooseWindowSeconds = 2f;
+    [SerializeField] private float _perfectTimingSeconds = 0.2f;
+    [SerializeField] private float _midLoopTimingSeconds = 1f;
 
     [Header("Audio Packs")]
     [SerializeField] private ConcertPackAudioData _lopataPack;

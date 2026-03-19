@@ -42,4 +42,8 @@ public static class GameEvents
     public static Action OnCombatStart;
     public static Action OnCombatEnd;
     public static Action OnAttack;
+    
+    //Chaos
+    public static Action<float> OnChaosChanged;
+    public static Action OnChaosFilled;
 }

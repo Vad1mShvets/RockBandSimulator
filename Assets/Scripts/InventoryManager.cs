@@ -22,9 +22,22 @@ public static class InventoryManager
         
         _inventoryItems[pickUpItem]--;
         
+        ConvertToChaos(pickUpItem);
+        
         GameEvents.OnInventoryItemUsed?.Invoke(pickUpItem);
         GameEvents.OnInventoryUpdate?.Invoke();
         
         return true;
+    }
+
+    private static void ConvertToChaos(InteractableTypes item)
+    {
+        switch (item)
+        {
+            case InteractableTypes.Beer:
+            case InteractableTypes.Cigs:
+                ChaosManager.AddChaos(20);
+                break;
+        }
     }
 }
