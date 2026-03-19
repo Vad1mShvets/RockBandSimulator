@@ -28,6 +28,21 @@ public class SpeakerAudioSource : MonoBehaviour
         if (_drums) _drums.Stop();
         if (_bass) _bass.Stop();
     }
+    
+    public void SetBassActive(bool active)
+    {
+        if (_bass) _bass.volume = active ? 1 : 0;
+    }
+
+    public void SetDrumsActive(bool active)
+    {
+        if (_drums) _drums.volume = active ? 1 : 0;
+    }
+
+    public void SetGuitarActive(bool active)
+    {
+        if (_guitar) _guitar.volume = active ? 1 : 0;
+    }
 
     private static void PlayOne(AudioSource source, AudioClip clip, double dspTime)
     {

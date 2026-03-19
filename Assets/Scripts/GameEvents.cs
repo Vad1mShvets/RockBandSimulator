@@ -23,6 +23,9 @@ public static class GameEvents
     public static Action<float> OnMidLoopTimingUpdate;
     public static Action OnMidLoopTimingEnd;
     
+    public static Action<NPCActor.NPCType> OnInstrumentStarted;
+    public static Action<NPCActor.NPCType> OnInstrumentStopped;
+    
     //Interactable
     public static Action<IInteractable> OnInteractableFocus;
     public static Action OnInteractableUnFocused;

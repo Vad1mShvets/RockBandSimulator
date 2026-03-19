@@ -21,6 +21,8 @@ public class FightActivity : INPCActivity
     {
         actor.EnterAnimatorCombatState();
         actor.NavMeshMover.SetActiveAutoRotation(false);
+        
+        GameEvents.OnInstrumentStopped?.Invoke(actor.NpcType);
     }
 
     public void Tick(NPCActor actor, float deltaTime)

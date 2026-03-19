@@ -10,15 +10,20 @@ public class CrowdGenerator : MonoBehaviour
         Applause = 2
     }
     
+    [SerializeField] private FanDude _fanDudeBase;
+    
+    [Space]
     [SerializeField] private Transform _lookTarger;
     [SerializeField] private Vector3 _zoneSize;
     [SerializeField] private float _dudeZoneSize = 0.8f;
     [SerializeField] private float _dudeYOffset = -0.175f;
 
+    [Space]
     [SerializeField] private int _minCount = 15;
     [SerializeField] private int _maxCount = 30;
-
-    [SerializeField] private FanDude _fanDudeBase;
+    
+    [Space]
+    [SerializeField] private AudioSource _crowdAmbient;
 
     private readonly List<FanDude> _fanDudes = new();
 
@@ -32,6 +37,7 @@ public class CrowdGenerator : MonoBehaviour
         GameEvents.OnConcertStarted += OnConcertStarted;
         GameEvents.OnNewLoopStart += OnNewLoopStart;
         GameEvents.OnConcertFinished += DestroyCrowd;
+        GameEvents.OnLoopTimingPressed += OnTimingPressed;
     }
 
     private void OnDisable()
@@ -39,11 +45,13 @@ public class CrowdGenerator : MonoBehaviour
         GameEvents.OnConcertStarted -= OnConcertStarted;
         GameEvents.OnNewLoopStart -= OnNewLoopStart;
         GameEvents.OnConcertFinished -= DestroyCrowd;
+        GameEvents.OnLoopTimingPressed -= OnTimingPressed;
     }
     
     private void OnConcertStarted(ConcertData _)
     {
         SpawnCrowd();
+        if (_crowdAmbient) _crowdAmbient.Play();
         SetActionForAll(CrowdActionType.Idle);
     }
 
@@ -101,6 +109,8 @@ public class CrowdGenerator : MonoBehaviour
         }
 
         _fanDudes.Clear();
+
+        if (_crowdAmbient) _crowdAmbient.Stop();
     }
 
     private Vector3 GetRandomPosition()
@@ -123,6 +133,19 @@ public class CrowdGenerator : MonoBehaviour
         }
 
         return true;
+    }
+
+    private void OnTimingPressed(ConcertService.TimingState timingState)
+    {
+        switch (timingState)
+        {
+            case ConcertService.TimingState.Perfect:
+                SoundsManager.PlaySound(SoundsManager.SoundType.CrowdCheering);
+                break;
+            case ConcertService.TimingState.Bad:
+                SoundsManager.PlaySound(SoundsManager.SoundType.CrowdBooing);
+                break;
+        }
     }
 
     private void OnDrawGizmos()

@@ -7,6 +7,8 @@ public static class SoundsManager
     {
         StrikeHit,
         StrikeBreathe,
+        CrowdCheering,
+        CrowdBooing
     }
 
     private static AudioConfig _audioConfig;

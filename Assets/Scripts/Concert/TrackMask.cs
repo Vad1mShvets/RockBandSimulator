@@ -7,9 +7,10 @@ public struct TrackMask
     public bool Drums;
     public bool Bass;
 
-    public static TrackMask All =>
-        new TrackMask { Guitar = true, Drums = true, Bass = true };
-
-    public static TrackMask NoBass =>
-        new TrackMask { Guitar = true, Drums = true, Bass = false };
+    public TrackMask(bool guitar, bool drums, bool bass)
+    {
+        Guitar = guitar;
+        Drums = drums;
+        Bass = bass;
+    }
 }

@@ -15,8 +15,8 @@ public class ConcertService : MonoBehaviour
     [SerializeField] private SpeakerAudioSource[] _speakers;
 
     [Header("Track Masks")]
-    [SerializeField] private TrackMask _concertMask = TrackMask.All;
-    [SerializeField] private TrackMask _rehearsalMask = TrackMask.NoBass;
+    [SerializeField] private TrackMask _concertMask = new(true, true, true);
+    [SerializeField] private TrackMask _rehearsalMask = new(true, true, false);
 
     [Header("Common Sounds")]
     [SerializeField] private AudioClip[] _missSounds;
@@ -24,6 +24,7 @@ public class ConcertService : MonoBehaviour
     // ───────── STATE ─────────
     private ConcertPackAudioData _currentPack;
     private TrackMask _currentMask;
+    private TrackMask _liveMask;
 
     private ConcertState _state = ConcertState.Idle;
     private TimingState _timingState = TimingState.Bad;
@@ -51,6 +52,8 @@ public class ConcertService : MonoBehaviour
         GameEvents.OnCallingConcertStart += OnConcertStart;
         GameEvents.OnCallingRehearsalStart += OnRehearsalStart;
         GameEvents.OnGuitarUpdate += OnGuitarUpdate;
+        GameEvents.OnInstrumentStarted += OnInstrumentStarted;
+        GameEvents.OnInstrumentStopped += OnInstrumentStopped;
 
         if (InputReader.Instance != null)
         {
@@ -66,6 +69,8 @@ public class ConcertService : MonoBehaviour
         GameEvents.OnCallingConcertStart -= OnConcertStart;
         GameEvents.OnCallingRehearsalStart -= OnRehearsalStart;
         GameEvents.OnGuitarUpdate -= OnGuitarUpdate;
+        GameEvents.OnInstrumentStarted -= OnInstrumentStarted;
+        GameEvents.OnInstrumentStopped -= OnInstrumentStopped;
 
         if (InputReader.Instance != null)
         {
@@ -100,9 +105,10 @@ public class ConcertService : MonoBehaviour
         
         OnGuitarUpdate(GuitarType.Lopata);
 
-        GameEvents.OnConcertStarted?.Invoke(
-            new ConcertData(_chooseWindowSeconds, _perfectTimingSeconds)
-        );
+        GameEvents.OnConcertStarted?.Invoke(new ConcertData(_chooseWindowSeconds, _perfectTimingSeconds));
+        
+        _liveMask = new TrackMask(true, true, true);
+        ApplyMix();
     }
 
     private void ResetState()
@@ -334,6 +340,60 @@ public class ConcertService : MonoBehaviour
             _currentPack = _lopataPack;
         else if (guitarType == GuitarType.Gvozdi)
             _currentPack = _gvozdiPack;
+    }
+    
+    private void OnInstrumentStarted(NPCActor.NPCType type)
+    {
+        switch (type)
+        {
+            case NPCActor.NPCType.Evgen:
+                _liveMask.Bass = true;
+                break;
+
+            case NPCActor.NPCType.Diman:
+                _liveMask.Drums = true;
+                break;
+            
+            default:
+                _liveMask.Guitar = true;
+                break;
+        }
+
+        ApplyMix();
+    }
+
+    private void OnInstrumentStopped(NPCActor.NPCType type)
+    {
+        switch (type)
+        {
+            case NPCActor.NPCType.Evgen:
+                _liveMask.Bass = false;
+                break;
+
+            case NPCActor.NPCType.Diman:
+                _liveMask.Drums = false;
+                break;
+            
+            default:
+                _liveMask.Guitar = false;
+                break;
+        }
+
+        ApplyMix();
+    }
+    
+    private void ApplyMix()
+    {
+        var bassActive  = _currentMask.Bass  && _liveMask.Bass;
+        var drumsActive = _currentMask.Drums && _liveMask.Drums;
+        var guitarActive = _currentMask.Guitar && _liveMask.Guitar;
+
+        foreach (var s in _speakers)
+        {
+            s.SetBassActive(bassActive);
+            s.SetDrumsActive(drumsActive);
+            s.SetGuitarActive(guitarActive);
+        }
     }
 
     // ───────── HELPERS ─────────

@@ -101,6 +101,8 @@ public class NPCActor : MonoBehaviour
             NPCType.Diman => "Drums",
             _ => ""
         };
+        
+        GameEvents.OnInstrumentStarted?.Invoke(_npcType);
 
         ActivityRunner.Interrupt(new UseSpotActivity(_concertActivity.GetSpotHard(), float.MaxValue, animationName,
             teleport: true));
@@ -110,7 +112,8 @@ public class NPCActor : MonoBehaviour
     {
         if (!_isConcertNPC)
             return;
-        
+    
+        GameEvents.OnInstrumentStopped?.Invoke(_npcType);
         ActivityRunner.Reset();
     }
 }
