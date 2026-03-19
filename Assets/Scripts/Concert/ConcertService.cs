@@ -45,21 +45,50 @@ public class ConcertService : MonoBehaviour
     private bool HasChoice => _queuedLoopType.HasValue;
 
     // ───────── LIFECYCLE ─────────
-
-    private void Awake()
+    
+    private void OnEnable()
     {
-        GameEvents.OnCallingConcertStart += () => Init(_concertMask);
-        GameEvents.OnCallingRehearsalStart += () => Init(_rehearsalMask);
-        GameEvents.OnGuitarUpdate += guitarType =>
-        {
-            if (guitarType is GuitarType.Lopata) _currentPack = _lopataPack;
-            else if (guitarType is GuitarType.Gvozdi) _currentPack = _gvozdiPack; 
-        };
+        GameEvents.OnCallingConcertStart += OnConcertStart;
+        GameEvents.OnCallingRehearsalStart += OnRehearsalStart;
+        GameEvents.OnGuitarUpdate += OnGuitarUpdate;
 
-        InputReader.Instance.ALoop += () => OnLoopPressed(LoopType.A);
-        InputReader.Instance.BLoop += () => OnLoopPressed(LoopType.B);
-        InputReader.Instance.CLoop += () => OnLoopPressed(LoopType.C);
-        InputReader.Instance.DLoop += () => OnLoopPressed(LoopType.D);
+        if (InputReader.Instance != null)
+        {
+            InputReader.Instance.ALoop += OnALoop;
+            InputReader.Instance.BLoop += OnBLoop;
+            InputReader.Instance.CLoop += OnCLoop;
+            InputReader.Instance.DLoop += OnDLoop;
+        }
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnCallingConcertStart -= OnConcertStart;
+        GameEvents.OnCallingRehearsalStart -= OnRehearsalStart;
+        GameEvents.OnGuitarUpdate -= OnGuitarUpdate;
+
+        if (InputReader.Instance != null)
+        {
+            InputReader.Instance.ALoop -= OnALoop;
+            InputReader.Instance.BLoop -= OnBLoop;
+            InputReader.Instance.CLoop -= OnCLoop;
+            InputReader.Instance.DLoop -= OnDLoop;
+        }
+    }
+    
+    private void OnALoop() => OnLoopPressed(LoopType.A);
+    private void OnBLoop() => OnLoopPressed(LoopType.B);
+    private void OnCLoop() => OnLoopPressed(LoopType.C);
+    private void OnDLoop() => OnLoopPressed(LoopType.D);
+    
+    private void OnConcertStart()
+    {
+        Init(_concertMask);
+    }
+
+    private void OnRehearsalStart()
+    {
+        Init(_rehearsalMask);
     }
 
     private void Init(TrackMask mask)
@@ -68,6 +97,8 @@ public class ConcertService : MonoBehaviour
 
         _currentMask = mask;
         _concertStarted = true;
+        
+        OnGuitarUpdate(GuitarType.Lopata);
 
         GameEvents.OnConcertStarted?.Invoke(
             new ConcertData(_chooseWindowSeconds, _perfectTimingSeconds)
@@ -295,6 +326,14 @@ public class ConcertService : MonoBehaviour
 
         ResetState();
         GameEvents.OnConcertFinished?.Invoke();
+    }
+    
+    private void OnGuitarUpdate(GuitarType guitarType)
+    {
+        if (guitarType == GuitarType.Lopata)
+            _currentPack = _lopataPack;
+        else if (guitarType == GuitarType.Gvozdi)
+            _currentPack = _gvozdiPack;
     }
 
     // ───────── HELPERS ─────────

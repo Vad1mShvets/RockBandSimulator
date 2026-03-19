@@ -3,6 +3,26 @@ using UnityEngine.Video;
 
 public class HandsAnimationController : MonoBehaviour
 {
+    private enum BaseState
+    {
+        Idle,
+        Walking
+    }
+
+    private enum ModeState
+    {
+        Normal,
+        Guitar,
+        Combat
+    }
+
+    private enum OverrideState
+    {
+        None,
+        Item,
+        Attack
+    }
+    
     [SerializeField] private VideoPlayer _videoPlayer;
 
     [Header("Base Clips")]
@@ -27,71 +47,35 @@ public class HandsAnimationController : MonoBehaviour
 
     private VideoClip _currentClip;
 
-    private enum BaseState
-    {
-        Idle,
-        Walking
-    }
-
-    private enum ModeState
-    {
-        Normal,
-        Guitar,
-        Combat
-    }
-
-    private enum OverrideState
-    {
-        None,
-        Item,
-        Attack
-    }
-
     private void Awake()
     {
         _videoPlayer.playOnAwake = false;
         _videoPlayer.waitForFirstFrame = true;
         _videoPlayer.loopPointReached += OnVideoFinished;
-
-        GameEvents.OnWalkingStart += () =>
-        {
-            _baseState = BaseState.Walking;
-            TryResolve();
-        };
-
-        GameEvents.OnWalkingEnd += () =>
-        {
-            _baseState = BaseState.Idle;
-            TryResolve();
-        };
-
-        GameEvents.OnCallingConcertStart += () =>
-        {
-            _mode = ModeState.Guitar;
-            TryResolve();
-        };
-
-        GameEvents.OnConcertFinished += () =>
-        {
-            _mode = ModeState.Normal;
-            TryResolve();
-        };
-
-        GameEvents.OnCombatStart += () =>
-        {
-            _mode = ModeState.Combat;
-            TryResolve();
-        };
-
-        GameEvents.OnCombatEnd += () =>
-        {
-            _mode = ModeState.Normal;
-            TryResolve();
-        };
-
+    }
+    
+    private void OnEnable()
+    {
+        GameEvents.OnWalkingStart += OnWalkingStart;
+        GameEvents.OnWalkingEnd += OnWalkingEnd;
+        GameEvents.OnCallingConcertStart += OnConcertStart;
+        GameEvents.OnConcertFinished += OnConcertFinished;
+        GameEvents.OnCombatStart += OnCombatStart;
+        GameEvents.OnCombatEnd += OnCombatEnd;
         GameEvents.OnInventoryItemUsed += OnItemUsed;
-
         GameEvents.OnAttack += PlayAttack;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnWalkingStart -= OnWalkingStart;
+        GameEvents.OnWalkingEnd -= OnWalkingEnd;
+        GameEvents.OnCallingConcertStart -= OnConcertStart;
+        GameEvents.OnConcertFinished -= OnConcertFinished;
+        GameEvents.OnCombatStart -= OnCombatStart;
+        GameEvents.OnCombatEnd -= OnCombatEnd;
+        GameEvents.OnInventoryItemUsed -= OnItemUsed;
+        GameEvents.OnAttack -= PlayAttack;
     }
 
     private void Start()
@@ -206,5 +190,43 @@ public class HandsAnimationController : MonoBehaviour
     {
         _bodyVideoScreen.SetActive(body);
         _cameraVideoScreen.SetActive(!body);
+    }
+    
+    // SUBSCRIPTION METHODS
+    
+    private void OnWalkingStart()
+    {
+        _baseState = BaseState.Walking;
+        TryResolve();
+    }
+
+    private void OnWalkingEnd()
+    {
+        _baseState = BaseState.Idle;
+        TryResolve();
+    }
+
+    private void OnConcertStart()
+    {
+        _mode = ModeState.Guitar;
+        TryResolve();
+    }
+
+    private void OnConcertFinished()
+    {
+        _mode = ModeState.Normal;
+        TryResolve();
+    }
+
+    private void OnCombatStart()
+    {
+        _mode = ModeState.Combat;
+        TryResolve();
+    }
+
+    private void OnCombatEnd()
+    {
+        _mode = ModeState.Normal;
+        TryResolve();
     }
 }

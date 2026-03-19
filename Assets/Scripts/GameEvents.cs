@@ -3,7 +3,7 @@ using System;
 public static class GameEvents
 {
     //Behaviour
-    public static Action OnGameStart;
+    public static Action OnGameplayStarted;
     
     //Concert
     public static Action OnCallingConcertStart;

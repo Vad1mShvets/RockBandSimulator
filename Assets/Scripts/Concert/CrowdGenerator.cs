@@ -24,31 +24,43 @@ public class CrowdGenerator : MonoBehaviour
 
     private void Awake()
     {
-        GameEvents.OnConcertStarted += _ =>
-        {
-            SpawnCrowd();
-            SetActionForAll(CrowdActionType.Idle);
-        };
-
-        GameEvents.OnNewLoopStart += loopType =>
-        {
-            switch (loopType)
-            {
-                case LoopType.E:
-                    SetActionForAll(CrowdActionType.Idle);
-                    break;
-                case LoopType.D:
-                    SetActionForAll(CrowdActionType.Applause);
-                    break;
-                default:
-                    SetActionForAll(CrowdActionType.Dance);
-                    break;
-            }
-        };
-        
-        GameEvents.OnConcertFinished += DestroyCrowd;
-        
         _fanDudeBase.gameObject.SetActive(false);
+    }
+    
+    private void OnEnable()
+    {
+        GameEvents.OnConcertStarted += OnConcertStarted;
+        GameEvents.OnNewLoopStart += OnNewLoopStart;
+        GameEvents.OnConcertFinished += DestroyCrowd;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnConcertStarted -= OnConcertStarted;
+        GameEvents.OnNewLoopStart -= OnNewLoopStart;
+        GameEvents.OnConcertFinished -= DestroyCrowd;
+    }
+    
+    private void OnConcertStarted(ConcertData _)
+    {
+        SpawnCrowd();
+        SetActionForAll(CrowdActionType.Idle);
+    }
+
+    private void OnNewLoopStart(LoopType loopType)
+    {
+        switch (loopType)
+        {
+            case LoopType.E:
+                SetActionForAll(CrowdActionType.Idle);
+                break;
+            case LoopType.D:
+                SetActionForAll(CrowdActionType.Applause);
+                break;
+            default:
+                SetActionForAll(CrowdActionType.Dance);
+                break;
+        }
     }
     
     private void SetActionForAll(CrowdActionType action)
