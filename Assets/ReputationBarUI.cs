@@ -1,16 +1,16 @@
-public class ChaosBarUI : AnimatedBarBaseUI
+public class ReputationBarUI : AnimatedBarBaseUI
 {
     private void OnEnable()
     {
         SetRange(0f, ChaosManager.MaxChaos);
         SnapToValue(ChaosManager.CurrentChaos);
 
-        GameEvents.OnChaosChanged += SetValue;
+        //GameEvents.OnReputationChanged += SetValue;
     }
 
     private void OnDisable()
     {
-        GameEvents.OnChaosChanged -= SetValue;
+        //GameEvents.OnReputationChanged -= SetValue;
     }
 
     private void SetValue(float value)
