@@ -8,7 +8,9 @@ public static class SoundsManager
         StrikeHit,
         StrikeBreathe,
         CrowdCheering,
-        CrowdBooing
+        CrowdBooing,
+        DrinkBeer,
+        SmokeCig,
     }
 
     private static AudioConfig _audioConfig;

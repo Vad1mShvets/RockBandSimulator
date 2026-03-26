@@ -18,7 +18,7 @@ public class PickUpItem : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        InventoryManager.AddItem(_interactableType);
-        Destroy(gameObject);
+        if (InventoryManager.TryUseItem(_interactableType))
+            Destroy(gameObject);
     }
 }

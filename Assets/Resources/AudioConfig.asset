@@ -40,3 +40,12 @@ MonoBehaviour:
     - {fileID: 8300000, guid: a80636caec188448cae350f98194dfd8, type: 3}
     - {fileID: 8300000, guid: 38ecbe0e08cb84d1eb1380298cdd118b, type: 3}
     Volume: 1
+  - Type: 4
+    Clips:
+    - {fileID: 8300000, guid: 9bda0685e8e3b4203b5e11e047a4b052, type: 3}
+    - {fileID: 8300000, guid: 7faf30f9ec5f24a86bb7389df6ab127e, type: 3}
+    Volume: 1
+  - Type: 5
+    Clips:
+    - {fileID: 8300000, guid: f7107b21b442d44eca8e810132a16d12, type: 3}
+    Volume: 1

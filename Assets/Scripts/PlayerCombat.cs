@@ -39,6 +39,9 @@ public class PlayerCombat : MonoBehaviour
     {
         if (_cooldown > 0f)
             return;
+        
+        if (!PlayerStateController.CanAttack())
+            return;
 
         EnterCombatMode();
         _cooldown = _attackCooldown;

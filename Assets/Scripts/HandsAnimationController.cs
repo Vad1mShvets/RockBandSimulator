@@ -1,67 +1,62 @@
+using System.IO;
 using UnityEngine;
 using UnityEngine.Video;
 
 public class HandsAnimationController : MonoBehaviour
 {
-    private enum BaseState
-    {
-        Idle,
-        Walking
-    }
+    private enum OverrideState { None, Item, Attack }
 
-    private enum ModeState
-    {
-        Normal,
-        Guitar,
-        Combat
-    }
-
-    private enum OverrideState
-    {
-        None,
-        Item,
-        Attack
-    }
-    
     [SerializeField] private VideoPlayer _videoPlayer;
 
+    [Header("Streaming")]
+    [SerializeField] private string _folder = "Hands";
+
     [Header("Base Clips")]
-    [SerializeField] private VideoClip _idleClip;
-    [SerializeField] private VideoClip _walkClip;
+    [SerializeField] private string _idleClip;
+    [SerializeField] private string _walkClip;
 
     [Header("Mode Clips")]
-    [SerializeField] private VideoClip _guitarClip;
+    [SerializeField] private string _guitarClip;
 
     [Header("Override Clips")]
-    [SerializeField] private VideoClip _beerClip;
-    [SerializeField] private VideoClip _cigsClip;
-    [SerializeField] private VideoClip[] _attackClips;
+    [SerializeField] private string _beerClip;
+    [SerializeField] private string _cigsClip;
+    [SerializeField] private string[] _attackClips;
 
     [Header("Screens")]
     [SerializeField] private GameObject _bodyVideoScreen;
     [SerializeField] private GameObject _cameraVideoScreen;
 
-    private BaseState _baseState = BaseState.Idle;
-    private ModeState _mode = ModeState.Normal;
     private OverrideState _override = OverrideState.None;
 
-    private VideoClip _currentClip;
+    private bool _isWalking;
+    private bool _isConcertActive;
+
+    private string _currentClip;
+
+    private string BasePath => Path.Combine(Application.streamingAssetsPath, _folder);
+
+    // =========================================================
+    // LIFECYCLE
+    // =========================================================
 
     private void Awake()
     {
         _videoPlayer.playOnAwake = false;
         _videoPlayer.waitForFirstFrame = true;
+        _videoPlayer.source = VideoSource.Url;
+
         _videoPlayer.loopPointReached += OnVideoFinished;
     }
-    
+
     private void OnEnable()
     {
         GameEvents.OnWalkingStart += OnWalkingStart;
         GameEvents.OnWalkingEnd += OnWalkingEnd;
+
         GameEvents.OnCallingConcertStart += OnConcertStart;
         GameEvents.OnConcertFinished += OnConcertFinished;
-        GameEvents.OnCombatStart += OnCombatStart;
-        GameEvents.OnCombatEnd += OnCombatEnd;
+
         GameEvents.OnInventoryItemUsed += OnItemUsed;
         GameEvents.OnAttack += PlayAttack;
     }
@@ -70,10 +65,10 @@ public class HandsAnimationController : MonoBehaviour
     {
         GameEvents.OnWalkingStart -= OnWalkingStart;
         GameEvents.OnWalkingEnd -= OnWalkingEnd;
+
         GameEvents.OnCallingConcertStart -= OnConcertStart;
         GameEvents.OnConcertFinished -= OnConcertFinished;
-        GameEvents.OnCombatStart -= OnCombatStart;
-        GameEvents.OnCombatEnd -= OnCombatEnd;
+
         GameEvents.OnInventoryItemUsed -= OnItemUsed;
         GameEvents.OnAttack -= PlayAttack;
     }
@@ -83,7 +78,14 @@ public class HandsAnimationController : MonoBehaviour
         Resolve();
     }
 
-    // ========================= STATE =========================
+    private void OnDestroy()
+    {
+        PlayerStateController.ExitBusy();
+    }
+
+    // =========================================================
+    // CORE RESOLVE
+    // =========================================================
 
     private void TryResolve()
     {
@@ -98,83 +100,114 @@ public class HandsAnimationController : MonoBehaviour
         if (_override != OverrideState.None)
             return;
 
-        if (_mode == ModeState.Guitar)
+        // 🎸 приоритет №1 — концерт
+        if (_isConcertActive)
         {
             PlayLoop(_guitarClip);
+            SetBodyScreen();
             return;
         }
 
-        PlayLoop(_baseState == BaseState.Walking ? _walkClip : _idleClip);
+        // 🚶 обычные состояния
+        if (_isWalking)
+        {
+            PlayLoop(_walkClip);
+        }
+        else
+        {
+            PlayLoop(_idleClip);
+        }
+
+        SetBodyScreen();
     }
 
-    private void PlayLoop(VideoClip clip)
+    // =========================================================
+    // PLAY
+    // =========================================================
+
+    private void PlayLoop(string file)
     {
-        if (!clip || _currentClip == clip)
+        if (string.IsNullOrEmpty(file) || _currentClip == file)
             return;
 
-        _currentClip = clip;
+        _currentClip = file;
 
         _videoPlayer.Stop();
         _videoPlayer.isLooping = true;
-        _videoPlayer.clip = clip;
-        _videoPlayer.Play();
 
-        UpdateScreen(true);
+        PlayVideo(file);
     }
 
-    // ========================= OVERRIDES =========================
-
-    private void PlayAttack()
+    private void PlayOverride(string file)
     {
-        StartOverride(_attackClips[Random.Range(0, _attackClips.Length)], OverrideState.Attack);
-    }
-
-    private void OnItemUsed(InteractableTypes item)
-    {
-        if (_override != OverrideState.None)
-            return;
-
-        VideoClip clip = null;
-
-        switch (item)
-        {
-            case InteractableTypes.Beer:
-                clip = _beerClip;
-                break;
-            case InteractableTypes.Cigs:
-                clip = _cigsClip;
-                break;
-        }
-
-        if (!clip)
-            return;
-
-        StartOverride(clip, OverrideState.Item);
-    }
-
-    private void StartOverride(VideoClip clip, OverrideState state)
-    {
-        _override = state;
-        _currentClip = clip;
+        _currentClip = file;
 
         _videoPlayer.Stop();
         _videoPlayer.isLooping = false;
-        _videoPlayer.clip = clip;
 
+        PlayVideo(file);
+
+        SetCameraScreen();
+    }
+
+    private void PlayVideo(string fileName)
+    {
+        fileName = Normalize(fileName);
+
+        var fullPath = Path.Combine(BasePath, fileName);
+
+        _videoPlayer.url = fullPath;
+        
+        _videoPlayer.frame = 0;
+
+        _videoPlayer.prepareCompleted -= OnPrepared;
         _videoPlayer.prepareCompleted += OnPrepared;
-        _videoPlayer.Prepare();
 
-        // временно скрываем экран, чтобы не показать старый кадр
-        _bodyVideoScreen.SetActive(false);
-        _cameraVideoScreen.SetActive(false);
+        _videoPlayer.Prepare();
     }
 
     private void OnPrepared(VideoPlayer player)
     {
         _videoPlayer.prepareCompleted -= OnPrepared;
-
         _videoPlayer.Play();
-        UpdateScreen(false);
+    }
+
+    // =========================================================
+    // OVERRIDE
+    // =========================================================
+
+    private void PlayAttack()
+    {
+        if (_attackClips.Length == 0) return;
+        if (_override != OverrideState.None) return;
+        if (!PlayerStateController.TryEnterBusy()) return;
+
+        _override = OverrideState.Attack;
+
+        string clip = _attackClips[Random.Range(0, _attackClips.Length)];
+        PlayOverride(clip);
+    }
+
+    private void OnItemUsed(InteractableTypes item)
+    {
+        if (_override != OverrideState.None) return;
+        if (!PlayerStateController.TryEnterBusy()) return;
+
+        string clip = item switch
+        {
+            InteractableTypes.Beer => _beerClip,
+            InteractableTypes.Cigs => _cigsClip,
+            _ => null
+        };
+
+        if (string.IsNullOrEmpty(clip))
+        {
+            PlayerStateController.ExitBusy();
+            return;
+        }
+
+        _override = OverrideState.Item;
+        PlayOverride(clip);
     }
 
     private void OnVideoFinished(VideoPlayer player)
@@ -183,50 +216,59 @@ public class HandsAnimationController : MonoBehaviour
             return;
 
         _override = OverrideState.None;
+
+        PlayerStateController.ExitBusy();
+
+        // 🔥 всегда возвращаемся в актуальный режим
         Resolve();
     }
 
-    private void UpdateScreen(bool body)
-    {
-        _bodyVideoScreen.SetActive(body);
-        _cameraVideoScreen.SetActive(!body);
-    }
-    
-    // SUBSCRIPTION METHODS
-    
+    // =========================================================
+    // EVENTS
+    // =========================================================
+
     private void OnWalkingStart()
     {
-        _baseState = BaseState.Walking;
+        _isWalking = true;
         TryResolve();
     }
 
     private void OnWalkingEnd()
     {
-        _baseState = BaseState.Idle;
+        _isWalking = false;
         TryResolve();
     }
 
     private void OnConcertStart()
     {
-        _mode = ModeState.Guitar;
-        TryResolve();
+        _isConcertActive = true;
+        Resolve();
     }
 
     private void OnConcertFinished()
     {
-        _mode = ModeState.Normal;
-        TryResolve();
+        _isConcertActive = false;
+        Resolve();
     }
 
-    private void OnCombatStart()
+    // =========================================================
+    // UTILS
+    // =========================================================
+
+    private void SetBodyScreen()
     {
-        _mode = ModeState.Combat;
-        TryResolve();
+        _bodyVideoScreen.SetActive(true);
+        _cameraVideoScreen.SetActive(false);
     }
 
-    private void OnCombatEnd()
+    private void SetCameraScreen()
     {
-        _mode = ModeState.Normal;
-        TryResolve();
+        _bodyVideoScreen.SetActive(false);
+        _cameraVideoScreen.SetActive(true);
+    }
+
+    private string Normalize(string file)
+    {
+        return file.EndsWith(".mp4") ? file : file + ".mp4";
     }
 }
