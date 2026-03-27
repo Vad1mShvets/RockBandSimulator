@@ -4,12 +4,28 @@ using UnityEngine;
 public class PlayerCameraLook : MonoBehaviour
 {
     [SerializeField] private CinemachineVirtualCamera _virtualCamera;
+    [SerializeField] private CinemachineInputProvider _inputProvider;
 
     private CinemachinePOV _pov;
 
     private void Awake()
     {
         _pov = _virtualCamera.GetCinemachineComponent<CinemachinePOV>();
+    }
+
+    private void OnEnable()
+    {
+        InputStateController.Instance.OnStateChanged += OnInputStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        InputStateController.Instance.OnStateChanged -= OnInputStateChanged;
+    }
+
+    private void OnInputStateChanged(InputStateController.State state)
+    {
+        _inputProvider.enabled = state is InputStateController.State.Gameplay;
     }
 
     public void LookInDirection(Vector3 worldDirection)

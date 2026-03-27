@@ -9812,6 +9812,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _virtualCamera: {fileID: 2084746405}
+  _inputProvider: {fileID: 2084746407}
 --- !u!143 &759256667
 CharacterController:
   m_ObjectHideFlags: 0
