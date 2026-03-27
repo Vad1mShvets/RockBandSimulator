@@ -177,6 +177,7 @@ GameObject:
   - component: {fileID: 393633494}
   - component: {fileID: 393633493}
   - component: {fileID: 393633492}
+  - component: {fileID: 393633495}
   m_Layer: 0
   m_Name: Player Input
   m_TagString: Untagged
@@ -287,7 +288,19 @@ MonoBehaviour:
     m_ActionId: 9bd53cf9-c768-4257-ae05-3fd99f6896e6
     m_ActionName: Gameplay/Fire[/DualSenseGamepadHID/rightTrigger,/Mouse/leftButton]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 393633492}
+        m_TargetAssemblyTypeName: InputReader, Assembly-CSharp
+        m_MethodName: OnSubmit
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: c25d07cb-387e-4f19-99ca-0c9a19ffc618
     m_ActionName: UI/Submit[/DualSenseGamepadHID/buttonSouth,/Keyboard/enter]
   - m_PersistentCalls:
@@ -382,6 +395,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &393633495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393633491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd8204c5e94d341f0b5cc2bcc0da4b15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerInput: {fileID: 393633493}
 --- !u!1 &1239557689
 GameObject:
   m_ObjectHideFlags: 0
@@ -589,6 +615,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d00045cf496734763860dcd627349bc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _uiSceneIndex: 1
+  _gameplaySceneIndex: 2
 --- !u!4 &1861578405
 Transform:
   m_ObjectHideFlags: 0

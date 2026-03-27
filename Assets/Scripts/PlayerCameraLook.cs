@@ -29,8 +29,9 @@ public class PlayerCameraLook : MonoBehaviour
 
     private float NormalizeVerticalAngle(float angle)
     {
-        if (angle > 180f)
+        if (angle > 180f) 
             angle -= 360f;
+        
         return angle;
     }
 }

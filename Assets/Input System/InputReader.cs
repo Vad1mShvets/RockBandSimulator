@@ -9,6 +9,8 @@ public class InputReader : MonoBehaviour
     public Vector2 Move { get; private set; }
     public Vector2 Look { get; private set; }
     
+    public event Action Submit;
+    
     public event Action Fire;
     public event Action Interact;
 
@@ -30,6 +32,12 @@ public class InputReader : MonoBehaviour
     public void OnLook(InputAction.CallbackContext context)
     {
         Look = context.ReadValue<Vector2>();
+    }
+    
+    public void OnSubmit(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            Submit?.Invoke();
     }
     
     public void OnFire(InputAction.CallbackContext context)

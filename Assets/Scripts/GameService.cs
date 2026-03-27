@@ -25,7 +25,7 @@ public class GameService : MonoBehaviour
         
         yield return FadeScreenUI.Instance.FadeOut();
         
-        CursorManager.SetGameplay();
+        InputStateController.Instance.SetGameplay();
     }
 
     public void RestartLevel()
