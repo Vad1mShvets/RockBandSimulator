@@ -1,14 +1,13 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ConcertFinishUI : MonoBehaviour
 {
     [SerializeField] private GameObject _body;
-    
+
     [SerializeField] private TextMeshProUGUI _perfectTimingsText;
     [SerializeField] private TextMeshProUGUI _missedTimingsText;
-    
+
     [SerializeField] private ReputationBarUI _reputationBarUI;
 
     private void OnEnable()
@@ -24,19 +23,19 @@ public class ConcertFinishUI : MonoBehaviour
     private void OnConcertFinished()
     {
         InputReader.Instance.Submit += OnCloseButton;
-        
+
         _body.SetActive(true);
-        
+
         InputStateController.Instance.SetUI();
 
         _perfectTimingsText.text = $"Perfect timings: {ConcertScoreManager.PositiveScore}";
         _missedTimingsText.text = $"Missed timings: {ConcertScoreManager.NegativeScore}";
     }
-    
+
     private void OnCloseButton()
     {
         InputReader.Instance.Submit -= OnCloseButton;
-        
+
         _body.SetActive(false);
         InputStateController.Instance.SetGameplay();
     }

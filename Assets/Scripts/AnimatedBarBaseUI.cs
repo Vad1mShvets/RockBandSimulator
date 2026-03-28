@@ -31,7 +31,7 @@ public abstract class AnimatedBarBaseUI : MonoBehaviour
             );
         }
 
-        if (_barPreviousFill == null)
+        if (!_barPreviousFill)
             return;
 
         var newFillReachedTarget = Mathf.Abs(_barNewFill.fillAmount - target01) < 0.001f;

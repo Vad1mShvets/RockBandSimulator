@@ -1,11 +1,9 @@
-using UnityEngine;
-
 public static class ChaosManager
 {
     public static int CurrentChaos { get; private set; }
     public static int MaxChaos { get; private set; } = 100;
 
-    static ChaosManager()
+    public static void Init()
     {
         GameEvents.OnGameplayStarted += Reset;
         
@@ -28,7 +26,7 @@ public static class ChaosManager
         MaxChaos = 100;
         SetChaos(0);
     }
-
+    
     public static void AddChaos(int amount)
     {
         SetChaos(CurrentChaos + amount);

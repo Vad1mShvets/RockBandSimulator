@@ -17,7 +17,7 @@ public static class SoundsManager
     
     private static Dictionary<SoundType, int> _lastPlayedClipIndex = new();
 
-    static SoundsManager()
+    public static void Init()
     {
         _audioConfig = Resources.Load<AudioConfig>("AudioConfig");
     }

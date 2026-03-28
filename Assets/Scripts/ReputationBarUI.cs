@@ -2,19 +2,22 @@ public class ReputationBarUI : AnimatedBarBaseUI
 {
     private void OnEnable()
     {
-        SetRange(0f, ChaosManager.MaxChaos);
-        SnapToValue(ChaosManager.CurrentChaos);
-
-        //GameEvents.OnReputationChanged += SetValue;
+        SetRange(0f, ReputationManager.MaxReputation);
+        
+        SnapToValue(0f);
+        
+        GameEvents.OnReputationUpdated += UpdateReputation;
+        
+        UpdateReputation();
     }
-
+    
     private void OnDisable()
     {
-        //GameEvents.OnReputationChanged -= SetValue;
+        GameEvents.OnReputationUpdated -= UpdateReputation;
     }
-
-    private void SetValue(float value)
+    
+    private void UpdateReputation()
     {
-        SetTargetValueInternal(value);
+        SetTargetValueInternal(ReputationManager.CurrentReputation);
     }
 }

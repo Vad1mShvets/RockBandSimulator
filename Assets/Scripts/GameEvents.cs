@@ -25,6 +25,11 @@ public static class GameEvents
     
     public static Action<NPCActor.NPCType> OnInstrumentStarted;
     public static Action<NPCActor.NPCType> OnInstrumentStopped;
+
+    public static Action OnConcertScoreUpdated;
+    
+    //Reputation
+    public static Action OnReputationUpdated;
     
     //Interactable
     public static Action<IInteractable> OnInteractableFocus;
