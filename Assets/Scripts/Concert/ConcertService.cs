@@ -2,31 +2,58 @@ using UnityEngine;
 
 public class ConcertService : MonoBehaviour
 {
-    [Header("Settings")]
-    [SerializeField] private float _chooseWindowSeconds = 2f;
+    // ───────── ENUMS ─────────
+
+    private enum ConcertState
+    {
+        Idle,
+        Intro,
+        Playing,
+        Finisher
+    }
+
+    private enum MidLoopState
+    {
+        Inactive,
+        Active,
+        Ended
+    }
+
+    public enum TimingState
+    {
+        Bad,
+        Perfect
+    }
+
+    // ───────── SERIALIZED ─────────
+
+    [Header("Timing")] [SerializeField] private float _chooseWindowSeconds = 2f;
     [SerializeField] private float _perfectTimingSeconds = 0.2f;
     [SerializeField] private float _midLoopTimingSeconds = 1f;
 
-    [Header("Audio Packs")]
-    [SerializeField] private ConcertPackAudioData _lopataPack;
+    [Header("Audio Packs")] [SerializeField]
+    private ConcertPackAudioData _lopataPack;
+
     [SerializeField] private ConcertPackAudioData _gvozdiPack;
 
-    [Header("Speakers")]
-    [SerializeField] private SpeakerAudioSource[] _speakers;
+    [Header("Speakers")] [SerializeField] private SpeakerAudioSource[] _speakers;
 
-    [Header("Track Masks")]
-    [SerializeField] private TrackMask _concertMask = new(true, true, true);
+    [Header("Track Masks")] [SerializeField]
+    private TrackMask _concertMask = new(true, true, true);
+
     [SerializeField] private TrackMask _rehearsalMask = new(true, true, false);
 
-    [Header("Common Sounds")]
-    [SerializeField] private AudioClip[] _missSounds;
+    [Header("Common Sounds")] [SerializeField]
+    private AudioClip[] _missSounds;
 
     // ───────── STATE ─────────
+
     private ConcertPackAudioData _currentPack;
     private TrackMask _currentMask;
     private TrackMask _liveMask;
 
-    private ConcertState _state = ConcertState.Idle;
+    private ConcertState _concertState = ConcertState.Idle;
+    private MidLoopState _midLoopState = MidLoopState.Inactive;
     private TimingState _timingState = TimingState.Bad;
 
     private LoopType _currentLoopType;
@@ -38,15 +65,16 @@ public class ConcertService : MonoBehaviour
     private bool _concertStarted;
     private bool _timerShown;
 
-    // ───────── MID LOOP ─────────
-    private bool _midLoopActive;
-    private bool _midLoopWaitingForInput;
-    private bool _midLoopEnded;
+    // ───────── DERIVED ─────────
 
+    private bool IsPlaying => _concertState == ConcertState.Playing;
     private bool HasChoice => _queuedLoopType.HasValue;
+    private bool MidLoopReady => _midLoopState == MidLoopState.Active;
 
-    // ───────── LIFECYCLE ─────────
-    
+    // ─────────────────────────────────────────────────────────────────
+    // LIFECYCLE
+    // ─────────────────────────────────────────────────────────────────
+
     private void OnEnable()
     {
         GameEvents.OnCallingConcertStart += OnConcertStart;
@@ -55,13 +83,11 @@ public class ConcertService : MonoBehaviour
         GameEvents.OnInstrumentStarted += OnInstrumentStarted;
         GameEvents.OnInstrumentStopped += OnInstrumentStopped;
 
-        if (InputReader.Instance != null)
-        {
-            InputReader.Instance.ALoop += OnALoop;
-            InputReader.Instance.BLoop += OnBLoop;
-            InputReader.Instance.CLoop += OnCLoop;
-            InputReader.Instance.DLoop += OnDLoop;
-        }
+        if (InputReader.Instance == null) return;
+        InputReader.Instance.ALoop += () => OnLoopPressed(LoopType.A);
+        InputReader.Instance.BLoop += () => OnLoopPressed(LoopType.B);
+        InputReader.Instance.CLoop += () => OnLoopPressed(LoopType.C);
+        InputReader.Instance.DLoop += () => OnLoopPressed(LoopType.D);
     }
 
     private void OnDisable()
@@ -72,29 +98,31 @@ public class ConcertService : MonoBehaviour
         GameEvents.OnInstrumentStarted -= OnInstrumentStarted;
         GameEvents.OnInstrumentStopped -= OnInstrumentStopped;
 
-        if (InputReader.Instance != null)
-        {
-            InputReader.Instance.ALoop -= OnALoop;
-            InputReader.Instance.BLoop -= OnBLoop;
-            InputReader.Instance.CLoop -= OnCLoop;
-            InputReader.Instance.DLoop -= OnDLoop;
-        }
-    }
-    
-    private void OnALoop() => OnLoopPressed(LoopType.A);
-    private void OnBLoop() => OnLoopPressed(LoopType.B);
-    private void OnCLoop() => OnLoopPressed(LoopType.C);
-    private void OnDLoop() => OnLoopPressed(LoopType.D);
-    
-    private void OnConcertStart()
-    {
-        Init(_concertMask);
+        if (InputReader.Instance == null) return;
+        InputReader.Instance.ALoop -= () => OnLoopPressed(LoopType.A);
+        InputReader.Instance.BLoop -= () => OnLoopPressed(LoopType.B);
+        InputReader.Instance.CLoop -= () => OnLoopPressed(LoopType.C);
+        InputReader.Instance.DLoop -= () => OnLoopPressed(LoopType.D);
     }
 
-    private void OnRehearsalStart()
+    private void Update()
     {
-        Init(_rehearsalMask);
+        if (_concertState == ConcertState.Idle) return;
+
+        var dspNow = AudioSettings.dspTime;
+
+        TickTimers(dspNow);
+
+        if (dspNow >= _nextLoopDsp)
+            AdvanceLoop();
     }
+
+    // ─────────────────────────────────────────────────────────────────
+    // INIT
+    // ─────────────────────────────────────────────────────────────────
+
+    private void OnConcertStart() => Init(_concertMask);
+    private void OnRehearsalStart() => Init(_rehearsalMask);
 
     private void Init(TrackMask mask)
     {
@@ -102,66 +130,33 @@ public class ConcertService : MonoBehaviour
 
         _currentMask = mask;
         _concertStarted = true;
-        
+        _liveMask = new TrackMask(true, true, true);
+
         OnGuitarUpdate(GuitarType.Lopata);
+        ApplyMix();
 
         GameEvents.OnConcertStarted?.Invoke(new ConcertData(_chooseWindowSeconds, _perfectTimingSeconds));
-        
-        _liveMask = new TrackMask(true, true, true);
-        ApplyMix();
     }
 
     private void ResetState()
     {
-        _state = ConcertState.Idle;
+        _concertState = ConcertState.Idle;
         _timingState = TimingState.Bad;
-
+        _midLoopState = MidLoopState.Inactive;
         _queuedLoopType = null;
         _currentLoop = null;
-
         _timerShown = false;
-        ResetMidLoop();
     }
 
-    private void ResetMidLoop()
-    {
-        _midLoopActive = false;
-        _midLoopWaitingForInput = false;
-        _midLoopEnded = false;
-    }
-
-    private void Update()
-    {
-        if (_state == ConcertState.Idle)
-            return;
-
-        var dspNow = AudioSettings.dspTime;
-
-        HandleTimer(dspNow);
-
-        if (dspNow >= _nextLoopDsp)
-            ScheduleNext();
-    }
-
-    // ───────── INPUT ─────────
+    // ─────────────────────────────────────────────────────────────────
+    // INPUT
+    // ─────────────────────────────────────────────────────────────────
 
     private void OnLoopPressed(LoopType loop)
     {
-        var guitarClip = _currentPack.GetGuitar(loop);
-
-        // MID LOOP
-        if (_midLoopActive && _midLoopWaitingForInput)
+        if (MidLoopReady)
         {
-            var result = guitarClip == _currentLoop
-                ? TimingState.Perfect
-                : TimingState.Bad;
-
-            GameEvents.OnLoopTimingPressed?.Invoke(result);
-
-            ResetMidLoop();
-            _midLoopEnded = true;
-
-            GameEvents.OnMidLoopTimingEnd?.Invoke();
+            ResolveMidLoopInput(loop);
             return;
         }
 
@@ -170,125 +165,128 @@ public class ConcertService : MonoBehaviour
 
     private void SelectLoop(LoopType loop)
     {
-        if (!_concertStarted || HasChoice)
-            return;
+        if (!_concertStarted || HasChoice) return;
 
-        if (_state == ConcertState.Idle)
+        if (_concertState == ConcertState.Idle)
         {
             StartIntroWithLoop(loop);
             return;
         }
 
-        if (!_timerShown)
-            return;
+        if (!_timerShown) return;
 
-        ResolveTimingFeedback();
+        ResolveEndLoopTiming();
         _queuedLoopType = loop;
     }
 
-    // ───────── FLOW ─────────
+    // ─────────────────────────────────────────────────────────────────
+    // CONCERT FLOW
+    // ─────────────────────────────────────────────────────────────────
 
     private void StartIntroWithLoop(LoopType loop)
     {
         GameEvents.OnLoopChooseTimerEnd?.Invoke();
         _queuedLoopType = loop;
-        StartIntro();
-    }
-
-    private void StartIntro()
-    {
-        _state = ConcertState.Intro;
+        _concertState = ConcertState.Intro;
         ScheduleLoop(LoopType.E, AudioSettings.dspTime);
     }
 
-    private void ScheduleNext()
+    private void AdvanceLoop()
     {
         HideTimer();
 
         if (HasChoice)
         {
-            var next = _queuedLoopType.Value;
-            _queuedLoopType = null;
-
-            _state = IsLastLoop(next)
-                ? ConcertState.Finisher
-                : ConcertState.Playing;
-
-            ScheduleLoop(next, _nextLoopDsp);
+            PlayQueuedLoop();
             return;
         }
 
-        if (_state == ConcertState.Finisher)
+        if (_concertState == ConcertState.Finisher)
         {
             StopConcert();
             return;
         }
 
-        ScheduleLoop(_currentLoopType, _nextLoopDsp);
+        ScheduleLoop(_currentLoopType, _nextLoopDsp); // repeat current
+    }
+
+    private void PlayQueuedLoop()
+    {
+        var next = _queuedLoopType.Value;
+        _queuedLoopType = null;
+
+        _concertState = IsLastLoop(next) ? ConcertState.Finisher : ConcertState.Playing;
+        ScheduleLoop(next, _nextLoopDsp);
     }
 
     private void ScheduleLoop(LoopType loop, double startDsp)
     {
         _currentLoopType = loop;
+        _midLoopState = MidLoopState.Inactive;
 
         var guitar = _currentMask.Guitar ? _currentPack.GetGuitar(loop) : null;
-        var drums  = _currentMask.Drums  ? _currentPack.GetDrums(loop)  : null;
-        var bass   = _currentMask.Bass   ? _currentPack.GetBass(loop)   : null;
+        var drums = _currentMask.Drums ? _currentPack.GetDrums(loop) : null;
+        var bass = _currentMask.Bass ? _currentPack.GetBass(loop) : null;
 
         _currentLoop = guitar;
-
-        var duration = (double)guitar.samples / guitar.frequency;
-        _nextLoopDsp = startDsp + duration;
-
-        ResetMidLoop();
+        _nextLoopDsp = startDsp + GetClipDuration(guitar ?? drums ?? bass);
 
         foreach (var s in _speakers)
             s.Play(guitar, drums, bass, startDsp);
-        
+
         GameEvents.OnNewLoopStart?.Invoke(_currentLoopType);
     }
 
-    // ───────── TIMERS ─────────
-
-    private void HandleTimer(double dspNow)
+    private void StopConcert()
     {
-        if (_state != ConcertState.Playing || HasChoice || !_currentLoop)
-            return;
+        foreach (var s in _speakers)
+            s.StopAll();
+
+        ResetState();
+        GameEvents.OnConcertFinished?.Invoke();
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // TIMERS
+    // ─────────────────────────────────────────────────────────────────
+
+    private void TickTimers(double dspNow)
+    {
+        if (!IsPlaying || HasChoice || _currentLoop == null) return;
 
         var timeLeft = _nextLoopDsp - dspNow;
-        var loopLength = _currentLoop.length;
 
-        // MID LOOP
-        var halfTime = loopLength * 0.5f;
+        TickMidLoopTimer(timeLeft);
+        TickEndLoopTimer(timeLeft);
+    }
+
+    private void TickMidLoopTimer(double timeLeft)
+    {
+        if (_midLoopState == MidLoopState.Ended) return;
+
+        var halfTime = _currentLoop.length * 0.5f;
         var midStart = halfTime + _midLoopTimingSeconds;
         var midEnd = halfTime;
 
-        if (!_midLoopActive && !_midLoopEnded &&
-            timeLeft <= midStart && timeLeft > midEnd)
+        if (_midLoopState == MidLoopState.Inactive && timeLeft <= midStart && timeLeft > midEnd)
         {
-            _midLoopActive = true;
-            _midLoopWaitingForInput = true;
+            _midLoopState = MidLoopState.Active;
             GameEvents.OnMidLoopTimingStarted?.Invoke(_currentLoopType);
         }
 
-        if (_midLoopActive)
+        if (_midLoopState == MidLoopState.Active)
         {
-            var t = Mathf.InverseLerp(midStart, midEnd, (float)timeLeft);
+            var t = Mathf.InverseLerp((float)midStart, (float)midEnd, (float)timeLeft);
             GameEvents.OnMidLoopTimingUpdate?.Invoke(t);
-        }
 
-        if (_midLoopActive && timeLeft <= midEnd)
-        {
-            GameEvents.OnLoopTimingPressed?.Invoke(TimingState.Bad);
-            ResetMidLoop();
-            _midLoopEnded = true;
-            GameEvents.OnMidLoopTimingEnd?.Invoke();
+            if (timeLeft <= midEnd)
+                EndMidLoop(TimingState.Bad); // window expired — auto-miss
         }
+    }
 
-        // END LOOP
-        _timingState = timeLeft <= _perfectTimingSeconds
-            ? TimingState.Perfect
-            : TimingState.Bad;
+    private void TickEndLoopTimer(double timeLeft)
+    {
+        _timingState = timeLeft <= _perfectTimingSeconds ? TimingState.Perfect : TimingState.Bad;
 
         if (!_timerShown && timeLeft <= _chooseWindowSeconds && timeLeft > 0)
         {
@@ -303,114 +301,104 @@ public class ConcertService : MonoBehaviour
         }
     }
 
-    private void ResolveTimingFeedback()
+    // ─────────────────────────────────────────────────────────────────
+    // TIMING RESOLUTION
+    // ─────────────────────────────────────────────────────────────────
+
+    private void ResolveMidLoopInput(LoopType loop)
+    {
+        var pressedClip = _currentPack.GetGuitar(loop);
+        var result = pressedClip == _currentLoop ? TimingState.Perfect : TimingState.Bad;
+        EndMidLoop(result);
+    }
+
+    private void EndMidLoop(TimingState result)
+    {
+        _midLoopState = MidLoopState.Ended;
+
+        GameEvents.OnLoopTimingPressed?.Invoke(result);
+        GameEvents.OnMidLoopTimingEnd?.Invoke();
+
+        if (result is TimingState.Bad)
+            PlayGuitarMissOnSpeakers();
+    }
+
+    private void ResolveEndLoopTiming()
     {
         GameEvents.OnLoopTimingPressed?.Invoke(_timingState);
 
+        PlayGuitarMissOnSpeakers();
+
+        HideTimer();
+    }
+
+    private void PlayGuitarMissOnSpeakers()
+    {
         if (_timingState == TimingState.Bad && _missSounds.Length > 0)
         {
             var miss = _missSounds[Random.Range(0, _missSounds.Length)];
             foreach (var s in _speakers)
                 s.PlayGuitarMiss(miss);
         }
-
-        HideTimer();
     }
 
     private void HideTimer()
     {
         if (!_timerShown) return;
-
         _timerShown = false;
         GameEvents.OnLoopChooseTimerEnd?.Invoke();
     }
 
-    private void StopConcert()
-    {
-        foreach (var s in _speakers)
-            s.StopAll();
+    // ─────────────────────────────────────────────────────────────────
+    // MIX
+    // ─────────────────────────────────────────────────────────────────
 
-        ResetState();
-        GameEvents.OnConcertFinished?.Invoke();
-    }
-    
-    private void OnGuitarUpdate(GuitarType guitarType)
+    private void OnGuitarUpdate(GuitarType type)
     {
-        if (guitarType == GuitarType.Lopata)
-            _currentPack = _lopataPack;
-        else if (guitarType == GuitarType.Gvozdi)
-            _currentPack = _gvozdiPack;
+        _currentPack = type == GuitarType.Lopata ? _lopataPack : _gvozdiPack;
     }
-    
-    private void OnInstrumentStarted(NPCActor.NPCType type)
+
+    private void OnInstrumentStarted(NPCActor.NPCType type) => SetLiveMask(type, true);
+    private void OnInstrumentStopped(NPCActor.NPCType type) => SetLiveMask(type, false);
+
+    private void SetLiveMask(NPCActor.NPCType type, bool active)
     {
         switch (type)
         {
-            case NPCActor.NPCType.Evgen:
-                _liveMask.Bass = true;
-                break;
-
-            case NPCActor.NPCType.Diman:
-                _liveMask.Drums = true;
-                break;
-            
-            default:
-                _liveMask.Guitar = true;
-                break;
+            case NPCActor.NPCType.Evgen: _liveMask.Bass = active; break;
+            case NPCActor.NPCType.Diman: _liveMask.Drums = active; break;
+            default: _liveMask.Guitar = active; break;
         }
 
         ApplyMix();
     }
 
-    private void OnInstrumentStopped(NPCActor.NPCType type)
-    {
-        switch (type)
-        {
-            case NPCActor.NPCType.Evgen:
-                _liveMask.Bass = false;
-                break;
-
-            case NPCActor.NPCType.Diman:
-                _liveMask.Drums = false;
-                break;
-            
-            default:
-                _liveMask.Guitar = false;
-                break;
-        }
-
-        ApplyMix();
-    }
-    
     private void ApplyMix()
     {
-        var bassActive  = _currentMask.Bass  && _liveMask.Bass;
-        var drumsActive = _currentMask.Drums && _liveMask.Drums;
-        var guitarActive = _currentMask.Guitar && _liveMask.Guitar;
+        var guitar = _currentMask.Guitar && _liveMask.Guitar;
+        var drums = _currentMask.Drums && _liveMask.Drums;
+        var bass = _currentMask.Bass && _liveMask.Bass;
 
         foreach (var s in _speakers)
         {
-            s.SetBassActive(bassActive);
-            s.SetDrumsActive(drumsActive);
-            s.SetGuitarActive(guitarActive);
+            s.SetGuitarActive(guitar);
+            s.SetDrumsActive(drums);
+            s.SetBassActive(bass);
         }
     }
 
-    // ───────── HELPERS ─────────
+    // ─────────────────────────────────────────────────────────────────
+    // HELPERS
+    // ─────────────────────────────────────────────────────────────────
 
-    private bool IsLastLoop(LoopType loop) => loop == LoopType.D;
-
-    private enum ConcertState
+    private static double GetClipDuration(AudioClip clip)
     {
-        Idle,
-        Intro,
-        Playing,
-        Finisher
+        if (clip)
+            return (double)clip.samples / clip.frequency;
+
+        Debug.LogError("[ConcertService] Cannot compute loop duration — all track clips are null.");
+        return 0;
     }
 
-    public enum TimingState
-    {
-        Bad,
-        Perfect
-    }
+    private static bool IsLastLoop(LoopType loop) => loop == LoopType.D;
 }
