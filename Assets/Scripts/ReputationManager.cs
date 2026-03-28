@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public static class ReputationManager
 {
     public static int CurrentReputation { get; private set; }
@@ -18,8 +20,15 @@ public static class ReputationManager
 
     private static void AddReputation(int reputation)
     {
-        CurrentReputation += reputation;
-        
+        SetReputation(CurrentReputation + reputation);
+    }
+
+    private static void SetReputation(int reputation)
+    {
+        CurrentReputation = Mathf.Clamp(reputation, 0, MaxReputation);
         GameEvents.OnReputationUpdated?.Invoke();
+        
+        if (CurrentReputation == MaxReputation)
+            GameEvents.OnReputationFilled.Invoke();
     }
 }

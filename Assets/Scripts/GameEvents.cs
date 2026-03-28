@@ -30,6 +30,7 @@ public static class GameEvents
     
     //Reputation
     public static Action OnReputationUpdated;
+    public static Action OnReputationFilled;
     
     //Interactable
     public static Action<IInteractable> OnInteractableFocus;

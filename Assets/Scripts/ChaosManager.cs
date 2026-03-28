@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public static class ChaosManager
 {
     public static int CurrentChaos { get; private set; }
@@ -5,6 +7,8 @@ public static class ChaosManager
 
     public static void Init()
     {
+        Reset();
+        
         GameEvents.OnGameplayStarted += Reset;
         
         GameEvents.OnLoopTimingPressed += state =>
@@ -39,10 +43,10 @@ public static class ChaosManager
 
     private static void SetChaos(int amount)
     {
-        CurrentChaos = amount;
+        CurrentChaos = Mathf.Clamp(amount, 0, MaxChaos);
         GameEvents.OnChaosChanged?.Invoke(amount);
         
-        if (CurrentChaos >= MaxChaos)
+        if (CurrentChaos == MaxChaos)
             GameEvents.OnChaosFilled?.Invoke();
     }
 }
