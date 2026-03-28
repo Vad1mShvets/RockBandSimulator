@@ -29,6 +29,6 @@ public static class ReputationManager
         GameEvents.OnReputationUpdated?.Invoke();
         
         if (CurrentReputation == MaxReputation)
-            GameEvents.OnReputationFilled.Invoke();
+            GameEvents.OnReputationFilled?.Invoke();
     }
 }

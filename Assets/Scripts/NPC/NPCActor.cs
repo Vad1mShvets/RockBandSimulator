@@ -44,15 +44,14 @@ public class NPCActor : MonoBehaviour
     public void Die()
     {
         _routine.ClearPlan();
-        
-        _activityRunner.Reset();
+        _routine.enabled = false;
         
         _navMeshMover.Stop();
-        ReleaseFromSnap();
 
         _navMeshMover.SetActiveNavMeshAgent(false);
         _navMeshMover.SetActiveAutoRotation(false);
 
+        _activityRunner.enabled = false;
         _animator.enabled = false;
 
         _ragdoll.EnableRagdoll();
