@@ -9,7 +9,7 @@ public static class ReputationManager
     {
         ResetReputation();
         
-        GameEvents.OnConcertFinished += () => AddReputation(ConcertScoreManager.OverallScore);
+        GameEvents.OnLastNoteBonusPressed += _ => AddReputation(ConcertScoreManager.OverallScore);
     }
 
     private static void ResetReputation()

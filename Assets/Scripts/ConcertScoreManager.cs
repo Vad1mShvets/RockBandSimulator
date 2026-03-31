@@ -1,13 +1,15 @@
 public static class ConcertScoreManager
 {
-    public static int OverallScore => PositiveScore - NegativeScore;
+    public static int OverallScore => PositiveScore - NegativeScore + LastNoteBonus;
     public static int PositiveScore { get; private set; }
     public static int NegativeScore { get; private set; }
+    public static int LastNoteBonus { get; private set; }
 
     public static void Init()
     {
-        GameEvents.OnLoopTimingPressed += OnTimingPressed;
         GameEvents.OnConcertStarted += _ => ResetScore();
+        GameEvents.OnLoopTimingPressed += OnTimingPressed;
+        GameEvents.OnLastNoteBonusPressed += OnLastNotePressed;
         
         ResetScore();
     }
@@ -16,6 +18,7 @@ public static class ConcertScoreManager
     {
         PositiveScore = 0;
         NegativeScore = 0;
+        LastNoteBonus = 0;
         
         GameEvents.OnConcertScoreUpdated?.Invoke();
     }
@@ -45,5 +48,15 @@ public static class ConcertScoreManager
                 RemoveScore(100);
                 break;
         }
+    }
+
+    private static void OnLastNotePressed(bool isPerfect)
+    {
+        if (!isPerfect)
+            return;
+        
+        LastNoteBonus += 150;
+        
+        GameEvents.OnConcertScoreUpdated?.Invoke();
     }
 }

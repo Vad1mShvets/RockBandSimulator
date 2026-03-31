@@ -7,19 +7,15 @@ public class ConcertFinishUI : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI _perfectTimingsText;
     [SerializeField] private TextMeshProUGUI _missedTimingsText;
+    [SerializeField] private TextMeshProUGUI _lastNoteBonusText;
 
     [SerializeField] private ReputationBarUI _reputationBarUI;
 
-    private void OnEnable()
+    private void Awake()
     {
-        GameEvents.OnConcertFinished += OnConcertFinished;
+        GameEvents.OnLastNoteBonusPressed += _ => OnConcertFinished();
+        _body.SetActive(false);
     }
-
-    private void OnDisable()
-    {
-        GameEvents.OnConcertFinished -= OnConcertFinished;
-    }
-
     private void OnConcertFinished()
     {
         InputReader.Instance.Submit += OnCloseButton;
@@ -27,9 +23,10 @@ public class ConcertFinishUI : MonoBehaviour
         _body.SetActive(true);
 
         InputStateController.Instance.SetUI();
-
-        _perfectTimingsText.text = $"Perfect timings: {ConcertScoreManager.PositiveScore}";
-        _missedTimingsText.text = $"Missed timings: {ConcertScoreManager.NegativeScore}";
+        
+        _perfectTimingsText.text = $"Perfect timings: <size=60><color=green>+{ConcertScoreManager.PositiveScore}</color></size>";
+        _missedTimingsText.text = $"Missed timings: <size=60><color=red>-{ConcertScoreManager.NegativeScore}</color></size>";
+        _lastNoteBonusText.text = $"Last note bonus <size=60><color=green>+{ConcertScoreManager.LastNoteBonus}</color></size>";
     }
 
     private void OnCloseButton()
@@ -38,5 +35,7 @@ public class ConcertFinishUI : MonoBehaviour
 
         _body.SetActive(false);
         InputStateController.Instance.SetGameplay();
+        
+        GameEvents.OnConcertFinishScreenClosed?.Invoke();
     }
 }

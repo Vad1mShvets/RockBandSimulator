@@ -82,12 +82,13 @@ public class ConcertService : MonoBehaviour
         GameEvents.OnGuitarUpdate += OnGuitarUpdate;
         GameEvents.OnInstrumentStarted += OnInstrumentStarted;
         GameEvents.OnInstrumentStopped += OnInstrumentStopped;
-
-        if (InputReader.Instance == null) return;
-        InputReader.Instance.ALoop += () => OnLoopPressed(LoopType.A);
-        InputReader.Instance.BLoop += () => OnLoopPressed(LoopType.B);
-        InputReader.Instance.CLoop += () => OnLoopPressed(LoopType.C);
-        InputReader.Instance.DLoop += () => OnLoopPressed(LoopType.D);
+        
+        GameEvents.OnConcertFinishScreenClosed += StopConcert;
+        
+        InputReader.Instance.ALoop += ALoopPressed;
+        InputReader.Instance.BLoop += BLoopPressed;
+        InputReader.Instance.CLoop += CLoopPressed;
+        InputReader.Instance.DLoop += DLoopPressed;
     }
 
     private void OnDisable()
@@ -97,13 +98,19 @@ public class ConcertService : MonoBehaviour
         GameEvents.OnGuitarUpdate -= OnGuitarUpdate;
         GameEvents.OnInstrumentStarted -= OnInstrumentStarted;
         GameEvents.OnInstrumentStopped -= OnInstrumentStopped;
-
-        if (InputReader.Instance == null) return;
-        InputReader.Instance.ALoop -= () => OnLoopPressed(LoopType.A);
-        InputReader.Instance.BLoop -= () => OnLoopPressed(LoopType.B);
-        InputReader.Instance.CLoop -= () => OnLoopPressed(LoopType.C);
-        InputReader.Instance.DLoop -= () => OnLoopPressed(LoopType.D);
+        
+        GameEvents.OnConcertFinishScreenClosed -= StopConcert;
+        
+        InputReader.Instance.ALoop -= ALoopPressed;
+        InputReader.Instance.BLoop -= BLoopPressed;
+        InputReader.Instance.CLoop -= CLoopPressed;
+        InputReader.Instance.DLoop -= DLoopPressed;
     }
+
+    private void ALoopPressed() => OnLoopPressed(LoopType.A);
+    private void BLoopPressed() => OnLoopPressed(LoopType.B);
+    private void CLoopPressed() => OnLoopPressed(LoopType.C);
+    private void DLoopPressed() => OnLoopPressed(LoopType.D);
 
     private void Update()
     {
