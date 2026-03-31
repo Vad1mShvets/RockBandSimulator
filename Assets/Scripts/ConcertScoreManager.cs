@@ -28,6 +28,7 @@ public static class ConcertScoreManager
         PositiveScore += score;
         
         GameEvents.OnConcertScoreUpdated?.Invoke();
+        GameEvents.OnConcertAddScore?.Invoke(score);
     }
     
     private static void RemoveScore(int score)
@@ -35,6 +36,7 @@ public static class ConcertScoreManager
         NegativeScore += score;
         
         GameEvents.OnConcertScoreUpdated?.Invoke();
+        GameEvents.OnConcertRemoveScore?.Invoke(-score);
     }
     
     private static void OnTimingPressed(ConcertService.TimingState timing)
@@ -56,7 +58,7 @@ public static class ConcertScoreManager
             return;
         
         LastNoteBonus += 150;
-        
+
         GameEvents.OnConcertScoreUpdated?.Invoke();
     }
 }

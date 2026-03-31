@@ -27,6 +27,8 @@ public static class GameEvents
     public static Action<NPCActor.NPCType> OnInstrumentStopped;
 
     public static Action OnConcertScoreUpdated;
+    public static Action<int> OnConcertAddScore;
+    public static Action<int> OnConcertRemoveScore;
 
     public static Action<bool> OnLastNoteBonusPressed;
 

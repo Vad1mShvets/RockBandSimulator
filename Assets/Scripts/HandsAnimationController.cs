@@ -44,6 +44,7 @@ public class HandsAnimationController : MonoBehaviour
     {
         _videoPlayer.playOnAwake = false;
         _videoPlayer.waitForFirstFrame = true;
+        _videoPlayer.skipOnDrop = true;
         _videoPlayer.source = VideoSource.Url;
 
         _videoPlayer.loopPointReached += OnVideoFinished;
@@ -84,7 +85,7 @@ public class HandsAnimationController : MonoBehaviour
     }
 
     // =========================================================
-    // CORE RESOLVE
+    // STATE
     // =========================================================
 
     private void TryResolve()
@@ -100,7 +101,6 @@ public class HandsAnimationController : MonoBehaviour
         if (_override != OverrideState.None)
             return;
 
-        // 🎸 приоритет №1 — концерт
         if (_isConcertActive)
         {
             PlayLoop(_guitarClip);
@@ -108,16 +108,7 @@ public class HandsAnimationController : MonoBehaviour
             return;
         }
 
-        // 🚶 обычные состояния
-        if (_isWalking)
-        {
-            PlayLoop(_walkClip);
-        }
-        else
-        {
-            PlayLoop(_idleClip);
-        }
-
+        PlayLoop(_isWalking ? _walkClip : _idleClip);
         SetBodyScreen();
     }
 
@@ -131,8 +122,6 @@ public class HandsAnimationController : MonoBehaviour
             return;
 
         _currentClip = file;
-
-        _videoPlayer.Stop();
         _videoPlayer.isLooping = true;
 
         PlayVideo(file);
@@ -141,24 +130,19 @@ public class HandsAnimationController : MonoBehaviour
     private void PlayOverride(string file)
     {
         _currentClip = file;
-
-        _videoPlayer.Stop();
         _videoPlayer.isLooping = false;
 
         PlayVideo(file);
-
         SetCameraScreen();
     }
 
     private void PlayVideo(string fileName)
     {
         fileName = Normalize(fileName);
-
         var fullPath = Path.Combine(BasePath, fileName);
 
+        _videoPlayer.Stop();
         _videoPlayer.url = fullPath;
-        
-        _videoPlayer.frame = 0;
 
         _videoPlayer.prepareCompleted -= OnPrepared;
         _videoPlayer.prepareCompleted += OnPrepared;
@@ -216,10 +200,8 @@ public class HandsAnimationController : MonoBehaviour
             return;
 
         _override = OverrideState.None;
-
         PlayerStateController.ExitBusy();
 
-        // 🔥 всегда возвращаемся в актуальный режим
         Resolve();
     }
 
