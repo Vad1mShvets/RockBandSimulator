@@ -9,4 +9,5 @@ public class ConcertAudioData : ScriptableObject
     public AudioClip BLoop;
     public AudioClip CLoop;
     public AudioClip DLoop;
+    public AudioClip FLoop;
 }

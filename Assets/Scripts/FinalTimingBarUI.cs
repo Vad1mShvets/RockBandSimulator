@@ -52,16 +52,8 @@ public class FinalTimingBarUI : MonoBehaviour
         var halfPerfectZone = _perfectZone.sizeDelta.x / 2f;
         var arrowX = _arrow.localPosition.x;
         var isPerfectTiming = Mathf.Abs(arrowX) <= halfPerfectZone;
-
-        StartCoroutine(DelayedTimingResult(isPerfectTiming));
-    }
-
-    private IEnumerator DelayedTimingResult(bool isPerfectTiming)
-    {
-        yield return new WaitForSeconds(0.5f);
-
-        gameObject.SetActive(false);
         
         GameEvents.OnLastNoteBonusPressed?.Invoke(isPerfectTiming);
+        gameObject.SetActive(false);
     }
 }

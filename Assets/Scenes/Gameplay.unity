@@ -24946,7 +24946,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _guitar: {fileID: 1837169232}
-  _guitarMiss: {fileID: 1012121207}
+  _guitarMiss: {fileID: 0}
   _drums: {fileID: 0}
   _bass: {fileID: 1526061348}
 --- !u!65 &1877311571

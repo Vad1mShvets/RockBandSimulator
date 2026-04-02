@@ -84,6 +84,8 @@ public class ConcertService : MonoBehaviour
         GameEvents.OnInstrumentStopped += OnInstrumentStopped;
         
         GameEvents.OnConcertFinishScreenClosed += StopConcert;
+
+        GameEvents.OnLastNoteBonusPressed += OnLastNotePressed;
         
         InputReader.Instance.ALoop += ALoopPressed;
         InputReader.Instance.BLoop += BLoopPressed;
@@ -100,6 +102,8 @@ public class ConcertService : MonoBehaviour
         GameEvents.OnInstrumentStopped -= OnInstrumentStopped;
         
         GameEvents.OnConcertFinishScreenClosed -= StopConcert;
+        
+        GameEvents.OnLastNoteBonusPressed -= OnLastNotePressed;
         
         InputReader.Instance.ALoop -= ALoopPressed;
         InputReader.Instance.BLoop -= BLoopPressed;
@@ -246,11 +250,22 @@ public class ConcertService : MonoBehaviour
 
     private void StopConcert()
     {
-        foreach (var s in _speakers)
-            s.StopAll();
+        StopSpeakers();
 
         ResetState();
         GameEvents.OnConcertFinished?.Invoke();
+    }
+
+    private void StopSpeakers()
+    {
+        foreach (var s in _speakers)
+            s.StopAll();
+    }
+
+    private void OnLastNotePressed(bool value)
+    {
+        StopSpeakers();
+        //Play F Loop on speakers here
     }
 
     // ─────────────────────────────────────────────────────────────────
