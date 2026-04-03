@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b0de1441a190476f84d46203267d169, type: 3}
+  m_Name: AkimDialogue
+  m_EditorClassIdentifier:
+  Lines:
+  - "Ha! There you are \u2014 the guitarist himself. So... how\u2019s life in this
+    charming dump treating you?"
+  - "Don\u2019t bother answering. I know \u2014 this place makes a rat look like
+    royalty."
+  - "But hey, I\u2019ve got a ticket out. Bright lights, big city\u2026 the whole
+    shebang if you know what I mean."
+  - "Step one: that ancient Golf by the wall. Been rotting there longer than my Uncle
+    Vinnie\u2019s career. I know a mechanic next door \u2014 can help\u2026 but he
+    can\u2019t stand me \u2014 hates my guts for no reason."
+  - "If you can grab his tools, I\u2019ll help get it running. So\u2026 you in or
+    what?"

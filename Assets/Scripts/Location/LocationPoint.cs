@@ -9,6 +9,16 @@ public class LocationPoint : MonoBehaviour
     public LocationType Type => _type;
     public Transform SpawnPoint => _playerSpawnPoint;
 
+    private void OnEnable()
+    {
+        TravelSystem.RegisterPoint(this);
+    }
+
+    private void OnDisable()
+    {
+        TravelSystem.UnregisterPoint(this);
+    }
+
     public void Activate()
     {
         if (_locationRoot != null)

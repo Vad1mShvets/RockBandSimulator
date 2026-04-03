@@ -25,6 +25,8 @@ public class GameService : MonoBehaviour
         SoundsManager.Init();
         ReputationManager.Init();
         MoneyManager.Init();
+        TravelSystem.Init();
+        DialogueManager.Init();
         
         yield return LoadUI();
         yield return LoadGameplay();

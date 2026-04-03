@@ -69,4 +69,8 @@ public static class GameEvents
     public static Action<LocationType> OnLocationChanged;
     public static Action OnTravelStarted;
     public static Action OnTravelFinished;
+
+    //Dialogue
+    public static Action OnDialogueStarted;
+    public static Action OnDialogueFinished;
 }

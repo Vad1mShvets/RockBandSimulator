@@ -4,6 +4,11 @@ public class PlayerSnapMover : MonoBehaviour
 {
     [SerializeField] private CharacterController _characterController;
 
+    private void OnEnable()
+    {
+        TravelSystem.SetPlayerSnapMover(this);
+    }
+
     public void SnapTo(Transform target)
     {
         if (!target) return;

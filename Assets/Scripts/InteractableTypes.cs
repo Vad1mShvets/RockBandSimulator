@@ -12,4 +12,5 @@ public enum InteractableTypes
     Casino = 202,
     RepairTarget = 203,
     ShopItem = 204,
+    DialogueNPC = 205,
 }

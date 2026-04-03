@@ -10,7 +10,8 @@ public class NPCActor : MonoBehaviour
     {
         None,
         Evgen,
-        Diman
+        Diman,
+        Akim
     }
     
     public NPCType NpcType => _npcType;
@@ -39,6 +40,20 @@ public class NPCActor : MonoBehaviour
     {
         GameEvents.OnConcertStarted -= OnConcertStarted;
         GameEvents.OnConcertFinished -= OnConcertFinished;
+    }
+
+    public void PauseForDialogue()
+    {
+        _navMeshMover.Stop();
+        _navMeshMover.SetActiveAutoRotation(false);
+        _activityRunner.Reset();
+        _routine.enabled = false;
+    }
+
+    public void ResumeFromDialogue()
+    {
+        _navMeshMover.SetActiveAutoRotation(true);
+        _routine.enabled = true;
     }
 
     public void Die()
