@@ -61,4 +61,12 @@ public static class GameEvents
     //Chaos
     public static Action<float> OnChaosChanged;
     public static Action OnChaosFilled;
+
+    //Money
+    public static Action<int> OnMoneyChanged;
+
+    //Location
+    public static Action<LocationType> OnLocationChanged;
+    public static Action OnTravelStarted;
+    public static Action OnTravelFinished;
 }

@@ -18,7 +18,7 @@ public static class ReputationManager
         MaxReputation = 1000;
     }
 
-    private static void AddReputation(int reputation)
+    public static void AddReputation(int reputation)
     {
         SetReputation(CurrentReputation + reputation);
     }

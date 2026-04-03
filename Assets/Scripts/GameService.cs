@@ -21,9 +21,10 @@ public class GameService : MonoBehaviour
     public IEnumerator StartGame()
     {
         ChaosManager.Init();
-        ConcertScoreManager.Init(); 
+        ConcertScoreManager.Init();
         SoundsManager.Init();
         ReputationManager.Init();
+        MoneyManager.Init();
         
         yield return LoadUI();
         yield return LoadGameplay();
