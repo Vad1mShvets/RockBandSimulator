@@ -5,13 +5,15 @@ public class NPCActor : MonoBehaviour
 {
     private static readonly int InActionBool = Animator.StringToHash("InAction");
     private static readonly int InCombatBool = Animator.StringToHash("InCombat");
-
+    
     public enum NPCType
     {
         None,
         Evgen,
         Diman,
-        Akim
+        Akim,
+        Artem,
+        Shev
     }
     
     public NPCType NpcType => _npcType;

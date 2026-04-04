@@ -3,17 +3,16 @@ using System.Linq;
 
 public static class TravelSystem
 {
+    public static LocationType CurrentLocation { get; private set; }
+    
     private static readonly List<LocationPoint> _points = new();
     private static PlayerSnapMover _playerSnapMover;
-    private static LocationType _currentLocation;
-
-    public static LocationType CurrentLocation => _currentLocation;
 
     public static void Init()
     {
         _points.Clear();
         _playerSnapMover = null;
-        _currentLocation = LocationType.Garage;
+        CurrentLocation = LocationType.Garage;
     }
 
     public static void RegisterPoint(LocationPoint point)
@@ -34,23 +33,23 @@ public static class TravelSystem
     
     public static bool SwitchLocation(LocationType destination)
     {
-        if (destination == _currentLocation)
+        if (destination == CurrentLocation)
             return false;
 
         var targetPoint = _points.FirstOrDefault(p => p.Type == destination);
-        if (targetPoint == null)
+        if (!targetPoint)
             return false;
         
-        var currentPoint = _points.FirstOrDefault(p => p.Type == _currentLocation);
-        if (currentPoint != null)
+        var currentPoint = _points.FirstOrDefault(p => p.Type == CurrentLocation);
+        if (currentPoint)
             currentPoint.Deactivate();
         
         targetPoint.Activate();
         
-        if (_playerSnapMover != null && targetPoint.SpawnPoint != null)
+        if (_playerSnapMover && targetPoint.SpawnPoint)
             _playerSnapMover.SnapTo(targetPoint.SpawnPoint);
 
-        _currentLocation = destination;
+        CurrentLocation = destination;
 
         GameEvents.OnLocationChanged?.Invoke(destination);
         return true;
