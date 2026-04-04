@@ -15,6 +15,11 @@ public class QuestObjectiveUI : MonoBehaviour
 
     private QuestObjective _shown0;
     private QuestObjective _shown1;
+    
+    private void Awake()
+    {
+        _root.SetActive(false);
+    }
 
     private void OnEnable()
     {
