@@ -70,6 +70,10 @@ public static class GameEvents
     public static Action OnTravelStarted;
     public static Action OnTravelFinished;
 
+    //NPC
+    public static Action<NPCActor> OnNPCDied;
+    public static Action<NPCActor> OnNPCDamaged;
+
     //Dialogue
     public static Action OnDialogueStarted;
     public static Action OnDialogueFinished;

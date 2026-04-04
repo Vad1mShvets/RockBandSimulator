@@ -17,10 +17,12 @@ public class NPCCombat : MonoBehaviour, IDamageable
         _actor.ActivityRunner.Run(new FightActivity(_target));
         _actor.PlayAnimation(HIT_ANIMATION_PREFIX + Random.Range(0, HIT_ANIMATIONS_COUNT));
 
+        GameEvents.OnNPCDamaged?.Invoke(_actor);
+
         _hitsToDie--;
         if (_hitsToDie <= 0)
             _actor.Die();
-        
+
         Debug.Log($"{gameObject.name} got hit {_hitsToDie}");
     }
 }

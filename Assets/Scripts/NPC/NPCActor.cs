@@ -72,6 +72,8 @@ public class NPCActor : MonoBehaviour
         _animator.enabled = false;
 
         _ragdoll.EnableRagdoll();
+
+        GameEvents.OnNPCDied?.Invoke(this);
     }
     
     public void SnapTo(Transform point)

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b0de1441a190476f84d46203267d169, type: 3}
+  m_Name: ArtemQuestDialogue2
+  m_EditorClassIdentifier:
+  Lines:
+  - "Well, well. Took care of that idiot, huh."
+  - "I\u2019m usually a bit rougher with guys like that\u2026 guess you decided to
+    go easy on him."
+  - "Either way \u2014 respect. Won\u2019t forget this. Although\u2026 next time,
+    I\u2019ll probably handle it myself."
+  - "Anyway, take care, my friend. I won\u2019t forget this."
+  - "Yeah \u2014 grab your cigarettes. No problem. I can always get cigarettes for
+    a friend."

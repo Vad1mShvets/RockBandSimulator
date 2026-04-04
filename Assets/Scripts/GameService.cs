@@ -27,6 +27,7 @@ public class GameService : MonoBehaviour
         MoneyManager.Init();
         TravelSystem.Init();
         DialogueManager.Init();
+        QuestManager.Init();
         
         yield return LoadUI();
         yield return LoadGameplay();
