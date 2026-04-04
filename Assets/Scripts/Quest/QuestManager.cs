@@ -7,6 +7,7 @@ public static class QuestManager
 
     public static IReadOnlyList<Quest> ActiveQuests => _activeQuests;
 
+    public static event Action OnInit;
     public static event Action OnQuestUpdated;
     public static event Action<QuestObjective> OnObjectiveCompleted;
     public static event Action OnQuestFailed;
@@ -14,9 +15,7 @@ public static class QuestManager
     public static void Init()
     {
         _activeQuests.Clear();
-        OnQuestUpdated = null;
-        OnObjectiveCompleted = null;
-        OnQuestFailed = null;
+        OnInit?.Invoke();
     }
 
     public static void RegisterQuest(Quest quest)

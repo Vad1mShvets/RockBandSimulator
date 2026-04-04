@@ -52,6 +52,15 @@ public class GameService : MonoBehaviour
         yield return FadeScreenUI.Instance.FadeIn();
 
         yield return UnloadGameplay();
+
+        ChaosManager.Init();
+        ConcertScoreManager.Init();
+        ReputationManager.Init();
+        MoneyManager.Init();
+        TravelSystem.Init();
+        DialogueManager.Init();
+        QuestManager.Init();
+
         yield return LoadGameplay();
 
         yield return FadeScreenUI.Instance.FadeOut();

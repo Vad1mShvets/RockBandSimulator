@@ -15,14 +15,15 @@ public class QuestObjectiveUI : MonoBehaviour
 
     private QuestObjective _shown0;
     private QuestObjective _shown1;
-    
+
     private void Awake()
     {
-        _root.SetActive(false);
+        HideObjectives();
     }
 
     private void OnEnable()
     {
+        QuestManager.OnInit += HideObjectives;
         QuestManager.OnQuestUpdated += Refresh;
         QuestManager.OnObjectiveCompleted += OnObjectiveCompleted;
         QuestManager.OnQuestFailed += OnQuestFailed;
@@ -30,6 +31,7 @@ public class QuestObjectiveUI : MonoBehaviour
 
     private void OnDisable()
     {
+        QuestManager.OnInit -= HideObjectives;
         QuestManager.OnQuestUpdated -= Refresh;
         QuestManager.OnObjectiveCompleted -= OnObjectiveCompleted;
         QuestManager.OnQuestFailed -= OnQuestFailed;
@@ -87,5 +89,10 @@ public class QuestObjectiveUI : MonoBehaviour
     {
         yield return new WaitForSeconds(_completedDisplayTime);
         Refresh();
+    }
+
+    private void HideObjectives()
+    {
+        _root.SetActive(false);
     }
 }
