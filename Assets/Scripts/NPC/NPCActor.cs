@@ -13,7 +13,10 @@ public class NPCActor : MonoBehaviour
         Diman,
         Akim,
         Artem,
-        Shev
+        Shev,
+        Bayar,
+        Caglei,
+        Petr
     }
     
     public NPCType NpcType => _npcType;

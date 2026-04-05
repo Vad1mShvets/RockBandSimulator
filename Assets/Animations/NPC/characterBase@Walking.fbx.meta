@@ -16,9 +16,14 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: "Copied Avatar Rig Configuration mis-match. Transform hierarchy
-      does not match:\n\tTransform 'CC_Base_Hip' for human bone 'Hips' not found\n"
-    rigImportWarnings: 
+    rigImportErrors: 
+    rigImportWarnings: "Copied Avatar Rig Configuration mis-match. Bone length in
+      copied configuration does not match position in animation file:\n\t'mixamorig:LeftUpLeg'
+      : position error = 12.625983 mm\n\t'mixamorig:LeftLeg' : position error = 57.926456
+      mm\n\t'mixamorig:LeftFoot' : position error = 1.159946 mm\n\t'mixamorig:RightUpLeg'
+      : position error = 12.462879 mm\n\t'mixamorig:RightLeg' : position error =
+      57.754494 mm\n\t'mixamorig:RightFoot' : position error = 1.136654 mm\n\t'mixamorig:RightToeBase'
+      : position error = 2.224481 mm\n"
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -41,19 +46,19 @@ ModelImporter:
       lastFrame: 42
       wrapMode: 0
       orientationOffsetY: 0
-      level: 0
+      level: 0.05
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
       keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
+      keepOriginalPositionY: 0
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []

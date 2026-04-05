@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: edee15ec7411f464f9ff73b9dcfc931d
+guid: 14219df9a583c45c69d8b864d3dcd63a
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -17,13 +17,7 @@ ModelImporter:
     removeConstantScaleCurves: 0
     motionNodeName: 
     rigImportErrors: 
-    rigImportWarnings: "Copied Avatar Rig Configuration mis-match. Bone length in
-      copied configuration does not match position in animation file:\n\t'mixamorig:LeftUpLeg'
-      : position error = 12.625983 mm\n\t'mixamorig:LeftLeg' : position error = 57.926456
-      mm\n\t'mixamorig:LeftFoot' : position error = 1.159946 mm\n\t'mixamorig:RightUpLeg'
-      : position error = 12.462879 mm\n\t'mixamorig:RightLeg' : position error =
-      57.754494 mm\n\t'mixamorig:RightFoot' : position error = 1.136654 mm\n\t'mixamorig:RightToeBase'
-      : position error = 2.224481 mm\n"
+    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -39,7 +33,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Guitar Playing
+      name: Smoking
       takeName: mixamo.com
       internalID: -203655887218126122
       firstFrame: 0
