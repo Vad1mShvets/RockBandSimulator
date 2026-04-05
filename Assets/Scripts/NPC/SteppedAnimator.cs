@@ -28,6 +28,11 @@ public class SteppedAnimator : MonoBehaviour
             _animator.speed = 1f;
     }
 
+    public void OverrideFramerate(int fps)
+    {
+        _fps = fps;
+    }
+
     private void LateUpdate()
     {
         if (_animator == null || !_animator.enabled)

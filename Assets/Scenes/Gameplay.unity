@@ -7534,7 +7534,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b269fb95ff4aa42a5b7975d6e3c061b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fps: 12
+  _fps: 20
 --- !u!1001 &465532593
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24965,7 +24965,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b269fb95ff4aa42a5b7975d6e3c061b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fps: 12
+  _fps: 20
 --- !u!144 &1484825136
 CharacterJoint:
   m_ObjectHideFlags: 0

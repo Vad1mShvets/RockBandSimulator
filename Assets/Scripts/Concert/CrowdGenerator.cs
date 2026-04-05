@@ -21,6 +21,10 @@ public class CrowdGenerator : MonoBehaviour
     [Space]
     [SerializeField] private int _minCount = 15;
     [SerializeField] private int _maxCount = 30;
+
+    [Space]
+    [SerializeField] private int _minFps = 5;
+    [SerializeField] private int _maxFps = 22;
     
     [Space]
     [SerializeField] private AudioSource _crowdAmbient;
@@ -97,6 +101,35 @@ public class CrowdGenerator : MonoBehaviour
             dude.transform.LookAt(_lookTarger);
             dude.gameObject.SetActive(true);
             _fanDudes.Add(dude);
+        }
+
+        ApplySteppedFps();
+    }
+
+    private void ApplySteppedFps()
+    {
+        if (_fanDudes.Count == 0)
+            return;
+
+        var targetPos = _lookTarger.position;
+        var minDist = float.MaxValue;
+        var maxDist = float.MinValue;
+
+        foreach (var dude in _fanDudes)
+        {
+            var dist = Vector3.Distance(dude.transform.position, targetPos);
+            if (dist < minDist) minDist = dist;
+            if (dist > maxDist) maxDist = dist;
+        }
+
+        var range = maxDist - minDist;
+
+        foreach (var dude in _fanDudes)
+        {
+            var dist = Vector3.Distance(dude.transform.position, targetPos);
+            var t = range > 0.01f ? (dist - minDist) / range : 0f;
+            var fps = Mathf.RoundToInt(Mathf.Lerp(_maxFps, _minFps, t));
+            dude.SetFramerate(fps);
         }
     }
 
